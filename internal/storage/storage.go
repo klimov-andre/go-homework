@@ -25,11 +25,20 @@ func Add(m *Movie) error {
 	return nil
 }
 
-func Update(u *Movie) error {
-	if _, ok := data[u.Id()]; ok {
+func Update(id uint64, title string, year int) error {
+	if _, ok := data[id]; !ok {
 		return MovieNotExists
 	}
-	data[u.Id()] = u
+	u := data[id]
+	if err := u.SetTitle(title); err != nil {
+		return err
+	}
+	if year != 0 {
+		if err := u.SetYear(year); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -14,6 +14,7 @@ var (
 	listCommand = "list"
 	addCommand  = "add"
 	removeCommand = "remove"
+	updateCommand = "update"
 )
 
 func listFunc(_ string) string {
@@ -32,7 +33,8 @@ func helpFunc(_ string) string {
 	return "/help - list commands\n" +
 		"/list - list movies\n" +
 		"/add <title> <year> - add new movie with title and year\n" +
-		"/remove <id> - remove movie with id"
+		"/remove <id> - remove movie with id\n" +
+		"/update <id> <title> {<year>} - remove movie with id and title, year is optional"
 }
 
 func addFunc(args string) string {
@@ -76,4 +78,31 @@ func removeFunc(args string) string {
 	}
 
 	return fmt.Sprintf("movie %v deleted", id)
+}
+
+func updateFunc(args string) string {
+	log.Printf("update command param: <%s>", args)
+	params := strings.Split(args, " ")
+	if len(params) < 2 || len(params) > 3 {
+		return errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params).Error()
+	}
+
+	id, err := strconv.ParseUint(params[0], 10, 64)
+	if err != nil {
+		return errors.Wrapf(BadArgument, "%s", params[0]).Error()
+	}
+
+	year := 0
+	if len(params) == 3 {
+		year, err = strconv.Atoi(params[2])
+		if err != nil {
+			return errors.Wrapf(BadArgument, "%s", params[0]).Error()
+		}
+	}
+
+	if err = storage.Update(id, params[1], year); err != nil {
+		return err.Error()
+	}
+
+	return fmt.Sprintf("movie %v successfully updated", id)
 }
