@@ -19,7 +19,7 @@ func List() []*Movie {
 
 func Add(m *Movie) error {
 	if _, ok := data[m.Id()]; ok {
-		return UserExists
+		return MovieExists
 	}
 	data[m.Id()] = m
 	return nil
@@ -27,16 +27,16 @@ func Add(m *Movie) error {
 
 func Update(u *Movie) error {
 	if _, ok := data[u.Id()]; ok {
-		return UserNotExists
+		return MovieNotExists
 	}
 	data[u.Id()] = u
 	return nil
 }
 
-func Delete(u *Movie) error {
-	if _, ok := data[u.Id()]; ok {
-		return UserNotExists
+func Delete(id uint64) error {
+	if _, ok := data[id]; !ok {
+		return MovieNotExists
 	}
-	delete(data, u.Id())
+	delete(data, id)
 	return nil
 }

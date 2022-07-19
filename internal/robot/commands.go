@@ -10,13 +10,17 @@ import (
 )
 
 var (
+	helpCommand = "help"
 	listCommand = "list"
 	addCommand  = "add"
-	helpCommand = "help"
+	removeCommand = "remove"
 )
 
 func listFunc(_ string) string {
 	data := storage.List()
+	if len(data) == 0 {
+		return EmptyList.Error()
+	}
 	res := make([]string, 0, len(data))
 	for _, v := range data {
 		res = append(res, v.String())
@@ -27,7 +31,8 @@ func listFunc(_ string) string {
 func helpFunc(_ string) string {
 	return "/help - list commands\n" +
 		"/list - list movies\n" +
-		"/add <title> <year> - add new movie with title and year"
+		"/add <title> <year> - add new movie with title and year\n" +
+		"/remove <id> - remove movie with id"
 }
 
 func addFunc(args string) string {
@@ -52,4 +57,23 @@ func addFunc(args string) string {
 		return err.Error()
 	}
 	return fmt.Sprintf("movie %v added", m)
+}
+
+func removeFunc(args string) string {
+	log.Printf("add command param: <%s>", args)
+	params := strings.Split(args, " ")
+	if len(params) != 1 {
+		return errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params).Error()
+	}
+
+	id, err := strconv.ParseUint(params[0], 10, 64)
+	if err != nil {
+		return errors.Wrapf(BadArgument, "%s", params[0]).Error()
+	}
+
+	if err = storage.Delete(id); err != nil {
+		return err.Error()
+	}
+
+	return fmt.Sprintf("movie %v deleted", id)
 }

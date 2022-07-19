@@ -5,6 +5,6 @@ import "github.com/pkg/errors"
 var (
 	BadYear       = errors.New("bad year")
 	TooLongTitle  = errors.New("title is too long")
-	UserExists    = errors.New("user already exists")
-	UserNotExists = errors.New("user is not exists")
+	MovieExists    = errors.New("movie already exists")
+	MovieNotExists = errors.New("movie is not exists")
 )

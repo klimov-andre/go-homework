@@ -26,6 +26,7 @@ func Init() (*Robot, error) {
 	router.Add(helpCommand, helpFunc)
 	router.Add(listCommand, listFunc)
 	router.Add(addCommand, addFunc)
+	router.Add(removeCommand, removeFunc)
 
 	return &Robot{bot: bot, router: router}, nil
 }
