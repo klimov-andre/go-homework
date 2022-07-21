@@ -1,40 +1,51 @@
 package storage
 
-var data map[uint64]*Movie
-
-func init() {
-	data = make(map[uint64]*Movie)
-
-	u, _ := NewMovie("The Shawshank Redemption", 1994)
-	data[u.id] = u
+type Storage struct {
+	data map[uint64]*Movie
+	lastId uint64
 }
 
-func List() []*Movie {
-	res := make([]*Movie, 0, len(data))
-	for _, v := range data {
+func NewStorage() *Storage {
+	var s = &Storage{
+		data: make(map[uint64]*Movie),
+		lastId: 1,
+	}
+
+	_, _ = s.Add("The Shawshank Redemption", 1994)
+	return s
+}
+
+func (s *Storage) List() []*Movie {
+	res := make([]*Movie, 0, len(s.data))
+	for _, v := range s.data {
 		res = append(res, v)
 	}
 	return res
 }
 
-func Add(m *Movie) error {
-	if _, ok := data[m.Id()]; ok {
-		return MovieExists
+func (s *Storage) Add(title string, year int) (*Movie, error) {
+	m, err := newMovie(title, year, s.lastId)
+	if err != nil {
+		return nil, err
 	}
-	data[m.Id()] = m
-	return nil
+	if _, ok := s.data[m.Id()]; ok {
+		return nil, MovieExists
+	}
+	s.lastId++
+	s.data[m.Id()] = m
+	return m, nil
 }
 
-func Update(id uint64, title string, year int) error {
-	if _, ok := data[id]; !ok {
+func (s *Storage) Update(id uint64, title string, year int) error {
+	if _, ok := s.data[id]; !ok {
 		return MovieNotExists
 	}
-	u := data[id]
-	if err := u.SetTitle(title); err != nil {
+	m := s.data[id]
+	if err := m.SetTitle(title); err != nil {
 		return err
 	}
 	if year != 0 {
-		if err := u.SetYear(year); err != nil {
+		if err := m.SetYear(year); err != nil {
 			return err
 		}
 	}
@@ -42,10 +53,10 @@ func Update(id uint64, title string, year int) error {
 	return nil
 }
 
-func Delete(id uint64) error {
-	if _, ok := data[id]; !ok {
+func (s *Storage) Delete(id uint64) error {
+	if _, ok := s.data[id]; !ok {
 		return MovieNotExists
 	}
-	delete(data, id)
+	delete(s.data, id)
 	return nil
 }

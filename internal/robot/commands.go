@@ -3,7 +3,6 @@ package robot
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"homework/internal/storage"
 	"log"
 	"strconv"
 	"strings"
@@ -17,8 +16,8 @@ var (
 	updateCommand = "update"
 )
 
-func listFunc(_ string) string {
-	data := storage.List()
+func (r *Robot) listFunc(_ string) string {
+	data := r.storage.List()
 	if len(data) == 0 {
 		return EmptyList.Error()
 	}
@@ -29,7 +28,7 @@ func listFunc(_ string) string {
 	return strings.Join(res, "\n")
 }
 
-func helpFunc(_ string) string {
+func (r *Robot) helpFunc(_ string) string {
 	return "/help - list commands\n" +
 		"/list - list movies\n" +
 		"/add <title> <year> - add new movie with title and year\n" +
@@ -37,7 +36,7 @@ func helpFunc(_ string) string {
 		"/update <id> <title> {<year>} - remove movie with id and title, year is optional"
 }
 
-func addFunc(args string) string {
+func (r *Robot) addFunc(args string) string {
 	log.Printf("add command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) != 2 {
@@ -49,19 +48,15 @@ func addFunc(args string) string {
 		return errors.Wrapf(BadArgument, "%s", params[1]).Error()
 	}
 
-	m, err := storage.NewMovie(params[0], year)
+	m, err := r.storage.Add(params[0], year)
 	if err != nil {
 		return err.Error()
 	}
 
-	err = storage.Add(m)
-	if err != nil {
-		return err.Error()
-	}
 	return fmt.Sprintf("movie %v added", m)
 }
 
-func removeFunc(args string) string {
+func (r *Robot) removeFunc(args string) string {
 	log.Printf("add command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) != 1 {
@@ -73,14 +68,14 @@ func removeFunc(args string) string {
 		return errors.Wrapf(BadArgument, "%s", params[0]).Error()
 	}
 
-	if err = storage.Delete(id); err != nil {
+	if err = r.storage.Delete(id); err != nil {
 		return err.Error()
 	}
 
 	return fmt.Sprintf("movie %v deleted", id)
 }
 
-func updateFunc(args string) string {
+func (r *Robot) updateFunc(args string) string {
 	log.Printf("update command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) < 2 || len(params) > 3 {
@@ -100,7 +95,7 @@ func updateFunc(args string) string {
 		}
 	}
 
-	if err = storage.Update(id, params[1], year); err != nil {
+	if err = r.storage.Update(id, params[1], year); err != nil {
 		return err.Error()
 	}
 

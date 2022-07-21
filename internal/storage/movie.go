@@ -5,15 +5,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-var lastId = uint64(0)
-
 type Movie struct {
 	id    uint64
 	title string
 	year  int
 }
 
-func NewMovie(title string, year int) (*Movie, error) {
+func newMovie(title string, year int, id uint64) (*Movie, error) {
 	m := Movie{}
 	if err := m.SetTitle(title); err != nil {
 		return nil, err
@@ -21,8 +19,7 @@ func NewMovie(title string, year int) (*Movie, error) {
 	if err := m.SetYear(year); err != nil {
 		return nil, err
 	}
-	lastId++
-	m.id = lastId
+	m.SetId(id)
 	return &m, nil
 }
 

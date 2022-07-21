@@ -17,9 +17,8 @@ func (r *Router) Add(command string, handlerFunc HandlerFunc) {
 }
 
 func (r *Router) Handle(command, arguments string) string {
-	if handler, ok := r.routes[command]; !ok {
-		return UnknownCommand.Error()
-	} else {
+	if handler, ok := r.routes[command]; ok {
 		return handler(arguments)
 	}
+	return UnknownCommand.Error()
 }
