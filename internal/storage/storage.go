@@ -36,21 +36,21 @@ func (s *Storage) Add(title string, year int) (*Movie, error) {
 	return m, nil
 }
 
-func (s *Storage) Update(id uint64, title string, year int) error {
+func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
 	if _, ok := s.data[id]; !ok {
-		return MovieNotExists
+		return nil, MovieNotExists
 	}
 	m := s.data[id]
 	if err := m.SetTitle(title); err != nil {
-		return err
+		return nil, err
 	}
 	if year != 0 {
 		if err := m.SetYear(year); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return m, nil
 }
 
 func (s *Storage) Delete(id uint64) error {

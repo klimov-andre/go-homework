@@ -1,18 +1,18 @@
 package main
 
 import (
-	"homework/internal/robot"
+	"homework/internal/service"
 	"log"
 )
 
 func main() {
 	log.Println("start main")
-	cmd, err := robot.Init()
+	service, err := service.NewService()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := cmd.Run(); err != nil {
+	if err := service.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

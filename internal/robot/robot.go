@@ -1,60 +1,100 @@
 package robot
 
 import (
-	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"homework/config"
-	"homework/internal/router"
 	"homework/internal/storage"
 	"log"
+	"strconv"
+	"strings"
 )
 
 type Robot struct {
-	bot    *tgbotapi.BotAPI
 	storage *storage.Storage
 }
 
-func Init() (*Robot, error) {
-	bot, err := tgbotapi.NewBotAPI(config.ApiKey)
-	if err != nil {
-		return nil, errors.Wrap(err, "init tgbot")
-	}
-	bot.Debug = true
-	log.Printf("Authorized on account %s", bot.Self.UserName)
-
-	return &Robot{bot: bot, storage: storage.NewStorage()}, nil
+func NewRobot() (*Robot, error) {
+	return &Robot{storage: storage.NewStorage()}, nil
 }
 
-func (r *Robot) Run() error {
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-	updates := r.bot.GetUpdatesChan(u)
+func (r *Robot) List() ([]*storage.Movie, error) {
+	data := r.storage.List()
+	if len(data) == 0 {
+		return nil, EmptyList
+	}
+	return data, nil
+}
 
-	router := router.New()
-	router.Add(helpCommand, r.helpFunc)
-	router.Add(listCommand, r.listFunc)
-	router.Add(addCommand, r.addFunc)
-	router.Add(removeCommand, r.removeFunc)
-	router.Add(updateCommand, r.updateFunc)
+func (r *Robot) HelpFunc() string {
+	return "/help - list commands\n" +
+		"/list - list movies\n" +
+		"/add <title> <year> - add new movie with title and year\n" +
+		"/remove <id> - remove movie with id\n" +
+		"/update <id> <title> {<year>} - remove movie with id and title, year is optional"
+}
 
-	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
+func (r *Robot) Add(args string) (*storage.Movie, error) {
+	log.Printf("add command param: <%s>", args)
+	params := strings.Split(args, " ")
+	if len(params) != 2 {
+		return nil, errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
+	}
 
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
-		if cmd := update.Message.Command(); cmd != "" {
-			msg.Text = router.Handle(cmd, update.Message.CommandArguments())
-		} else {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-			msg.Text = fmt.Sprintf("you send <%v>", update.Message.Text)
-		}
+	year, err := strconv.Atoi(params[1])
+	if err != nil {
+		return nil, errors.Wrapf(BadArgument, "%s", params[1])
+	}
 
-		_, err := r.bot.Send(msg)
+	m, err := r.storage.Add(params[0], year)
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
+func (r *Robot) Remove(args string) error {
+	log.Printf("remove command param: <%s>", args)
+	params := strings.Split(args, " ")
+	if len(params) != 1 {
+		return errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
+	}
+
+	id, err := strconv.ParseUint(params[0], 10, 64)
+	if err != nil {
+		return errors.Wrapf(BadArgument, "%s", params[0])
+	}
+
+	if err = r.storage.Delete(id); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Robot) Update(args string) (*storage.Movie, error) {
+	log.Printf("update command param: <%s>", args)
+	params := strings.Split(args, " ")
+	if len(params) < 2 || len(params) > 3 {
+		return nil, errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
+	}
+
+	id, err := strconv.ParseUint(params[0], 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(BadArgument, "%s", params[0])
+	}
+
+	year := 0
+	if len(params) == 3 {
+		year, err = strconv.Atoi(params[2])
 		if err != nil {
-			return errors.Wrap(err, "send tg message")
+			return nil, errors.Wrapf(BadArgument, "%s", params[0])
 		}
 	}
-	return nil
+
+	m, err := r.storage.Update(id, params[1], year)
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
 }
