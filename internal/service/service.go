@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	helpCommand = "help"
-	listCommand = "list"
-	addCommand  = "add"
+	helpCommand   = "help"
+	listCommand   = "list"
+	addCommand    = "add"
 	removeCommand = "remove"
 	updateCommand = "update"
 )
@@ -21,7 +21,7 @@ var (
 type Service struct {
 	*router.Router
 
-	bot    *tgbotapi.BotAPI
+	bot   *tgbotapi.BotAPI
 	robot *robot.Robot
 }
 

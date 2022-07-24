@@ -6,7 +6,6 @@ import (
 	"github.com/google/uuid"
 )
 
-
 type HandlerFunc func(string) (string, error)
 
 type Router struct {

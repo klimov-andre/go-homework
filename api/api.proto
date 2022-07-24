@@ -1,0 +1,53 @@
+syntax = "proto3";
+package ozon.dev.homework.api;
+option go_package = "pkg/api";
+
+service Admin {
+  rpc MovieCreate(MovieCreateRequest) returns (MovieCreateResponse){}
+  rpc MovieList(MovieListRequest) returns (MovieListResponse){}
+  rpc MovieUpdate(MovieUpdateRequest) returns (MovieUpdateResponse){}
+  rpc MovieDelete(MovieDeleteRequest) returns (MovieDeleteResponse){}
+}
+
+message Movie {
+  uint64 id = 1;
+  string title = 2;
+  int32 year = 3;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieCreate endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieCreateRequest {
+  string title =1;
+  int32 year = 2;
+}
+message MovieCreateResponse{}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieList endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieListRequest{}
+message MovieListResponse {
+  repeated Movie movie = 1;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieUpdate endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieUpdateRequest{
+    Movie movie = 1;
+}
+message MovieUpdateResponse {}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieDelete endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieDeleteRequest{
+  uint64 id = 1;
+}
+message MovieDeleteResponse {}

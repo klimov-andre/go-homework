@@ -5,7 +5,7 @@ import "sync"
 const poolSize = 10
 
 type Storage struct {
-	data map[uint64]*Movie
+	data   map[uint64]*Movie
 	lastId uint64
 
 	// mu is used for secure asynchronous access
@@ -16,8 +16,8 @@ type Storage struct {
 
 func NewStorage() *Storage {
 	var s = &Storage{
-		data: make(map[uint64]*Movie),
-		lastId: 1,
+		data:           make(map[uint64]*Movie),
+		lastId:         1,
 		connectionPool: make(chan struct{}, poolSize),
 	}
 
