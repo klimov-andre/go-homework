@@ -37,7 +37,7 @@ func (m Movie) Title() string {
 
 func (m *Movie) SetTitle(title string) error {
 	if len(title) > 250 {
-		return errors.Wrap(TooLongTitle, title)
+		return errors.Wrapf(ErrValidation, "title is too long %s", title)
 	}
 	m.title = title
 	return nil
@@ -49,7 +49,7 @@ func (m Movie) Year() int {
 
 func (m *Movie) SetYear(year int) error {
 	if year < 1985 {
-		return errors.Wrap(BadYear, fmt.Sprintf("%v", year))
+		return errors.Wrapf(ErrValidation, "bad year %v", year)
 	}
 	m.year = year
 	return nil

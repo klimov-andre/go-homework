@@ -12,8 +12,8 @@ type Robot struct {
 	storage *storage.Storage
 }
 
-func NewRobot() (*Robot, error) {
-	return &Robot{storage: storage.NewStorage()}, nil
+func NewRobot(storage *storage.Storage) (*Robot, error) {
+	return &Robot{storage: storage}, nil
 }
 
 func (r *Robot) List() ([]*storage.Movie, error) {

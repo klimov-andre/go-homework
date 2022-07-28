@@ -1,6 +1,8 @@
 package storage
 
-import "sync"
+import (
+	"sync"
+)
 
 const poolSize = 10
 
@@ -53,7 +55,7 @@ func (s *Storage) Add(title string, year int) (*Movie, error) {
 		return nil, err
 	}
 	if _, ok := s.data[m.Id()]; ok {
-		return nil, MovieExists
+		return nil, ErrMovieExists
 	}
 	s.lastId++
 	s.data[m.Id()] = m
@@ -69,7 +71,7 @@ func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
 	}()
 
 	if _, ok := s.data[id]; !ok {
-		return nil, MovieNotExists
+		return nil, ErrMovieNotExists
 	}
 	m := s.data[id]
 	if err := m.SetTitle(title); err != nil {
@@ -93,7 +95,7 @@ func (s *Storage) Delete(id uint64) error {
 	}()
 
 	if _, ok := s.data[id]; !ok {
-		return MovieNotExists
+		return ErrMovieNotExists
 	}
 	delete(s.data, id)
 	return nil
