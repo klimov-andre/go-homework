@@ -8,7 +8,7 @@ import (
 	"homework/config"
 	pb "homework/pkg/api"
 	"log"
-	"time"
+	"sync"
 )
 
 func main() {
@@ -19,14 +19,21 @@ func main() {
 
 	client := pb.NewAdminClient(conns)
 
+	var wg = sync.WaitGroup{}
 	ctx := context.Background()
-	for i := 0; i < 10; i++ {
-		time.Sleep(time.Second * 30)
-		list, errG := client.MovieList(ctx, &pb.MovieListRequest{})
-		if errG != nil {
-			log.Fatal(err)
-		}
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func(k int) {
+			defer wg.Done()
+			list, errG := client.MovieList(ctx, &pb.MovieListRequest{})
+			if errG != nil {
+				log.Fatal(err)
+			}
 
-		fmt.Println(list)
+			fmt.Printf("%d %v\n", k, list)
+		}(i)
+
 	}
+
+	wg.Wait()
 }

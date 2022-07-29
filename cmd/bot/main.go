@@ -25,5 +25,6 @@ func main() {
 		}
 	}()
 
+	go runREST()
 	runGRPC(storage)
 }
