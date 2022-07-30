@@ -28,6 +28,8 @@ func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateReque
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		} else if errors.Is(err, storagePkg.ErrMovieExists) {
 			return nil, status.Error(codes.AlreadyExists, err.Error())
+		} else if errors.Is(err, storagePkg.ErrTimeout) {
+			return nil, status.Error(codes.DeadlineExceeded, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -36,7 +38,13 @@ func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateReque
 }
 
 func (i *implementation) MovieList(_ context.Context, _ *pb.MovieListRequest) (*pb.MovieListResponse, error) {
-	list := i.storage.List()
+	list, err := i.storage.List()
+	if err != nil {
+		if errors.Is(err, storagePkg.ErrTimeout) {
+			return nil, status.Error(codes.DeadlineExceeded, err.Error())
+		}
+		return nil, status.Error(codes.Internal, err.Error())
+	}
 	result := make([]*pb.Movie, 0, len(list))
 	for _, m := range list {
 		result = append(result, &pb.Movie{
@@ -58,6 +66,8 @@ func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateReque
 			return nil, status.Error(codes.InvalidArgument, err.Error())
 		} else if errors.Is(err, storagePkg.ErrMovieNotExists) {
 			return nil, status.Error(codes.NotFound, err.Error())
+		} else if errors.Is(err, storagePkg.ErrTimeout) {
+			return nil, status.Error(codes.DeadlineExceeded, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -71,6 +81,8 @@ func (i *implementation) MovieDelete(_ context.Context, req *pb.MovieDeleteReque
 			return nil, status.Error(codes.NotFound, err.Error())
 		}
 		return nil, status.Error(codes.Internal, err.Error())
+	} else if errors.Is(err, storagePkg.ErrTimeout) {
+		return nil, status.Error(codes.DeadlineExceeded, err.Error())
 	}
 
 	return &pb.MovieDeleteResponse{}, nil

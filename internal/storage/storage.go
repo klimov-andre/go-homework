@@ -1,10 +1,16 @@
 package storage
 
 import (
+	"context"
+	"github.com/pkg/errors"
 	"sync"
+	"time"
 )
 
-const poolSize = 10
+const (
+	poolSize        = 10
+	timeoutDuration = 500 * time.Nanosecond
+)
 
 type Storage struct {
 	data   map[uint64]*Movie
@@ -27,28 +33,42 @@ func NewStorage() *Storage {
 	return s
 }
 
-func (s *Storage) List() []*Movie {
-	s.connectionPool <- struct{}{}
-	s.mu.RLock()
-	defer func() {
-		s.mu.RUnlock()
-		<-s.connectionPool
-	}()
+func (s *Storage) List() ([]*Movie, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDuration)
+	defer cancel()
+	select {
+	case s.connectionPool <- struct{}{}:
+		s.mu.RLock()
+		defer func() {
+			s.mu.RUnlock()
+			<-s.connectionPool
+		}()
+		break
+	case <-ctx.Done():
+		return nil, errors.Wrap(ErrTimeout, ctx.Err().Error())
+	}
 
 	res := make([]*Movie, 0, len(s.data))
 	for _, v := range s.data {
 		res = append(res, v)
 	}
-	return res
+	return res, nil
 }
 
 func (s *Storage) Add(title string, year int) (*Movie, error) {
-	s.connectionPool <- struct{}{}
-	s.mu.Lock()
-	defer func() {
-		s.mu.Unlock()
-		<-s.connectionPool
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDuration)
+	defer cancel()
+	select {
+	case s.connectionPool <- struct{}{}:
+		s.mu.Lock()
+		defer func() {
+			s.mu.Unlock()
+			<-s.connectionPool
+		}()
+		break
+	case <-ctx.Done():
+		return nil, errors.Wrap(ErrTimeout, ctx.Err().Error())
+	}
 
 	m, err := newMovie(title, year, s.lastId)
 	if err != nil {
@@ -63,12 +83,19 @@ func (s *Storage) Add(title string, year int) (*Movie, error) {
 }
 
 func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
-	s.connectionPool <- struct{}{}
-	s.mu.Lock()
-	defer func() {
-		s.mu.Unlock()
-		<-s.connectionPool
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDuration)
+	defer cancel()
+	select {
+	case s.connectionPool <- struct{}{}:
+		s.mu.Lock()
+		defer func() {
+			s.mu.Unlock()
+			<-s.connectionPool
+		}()
+		break
+	case <-ctx.Done():
+		return nil, errors.Wrap(ErrTimeout, ctx.Err().Error())
+	}
 
 	if _, ok := s.data[id]; !ok {
 		return nil, ErrMovieNotExists
@@ -87,12 +114,19 @@ func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
 }
 
 func (s *Storage) Delete(id uint64) error {
-	s.connectionPool <- struct{}{}
-	s.mu.Lock()
-	defer func() {
-		s.mu.Unlock()
-		<-s.connectionPool
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), timeoutDuration)
+	defer cancel()
+	select {
+	case s.connectionPool <- struct{}{}:
+		s.mu.Lock()
+		defer func() {
+			s.mu.Unlock()
+			<-s.connectionPool
+		}()
+		break
+	case <-ctx.Done():
+		return errors.Wrap(ErrTimeout, ctx.Err().Error())
+	}
 
 	if _, ok := s.data[id]; !ok {
 		return ErrMovieNotExists

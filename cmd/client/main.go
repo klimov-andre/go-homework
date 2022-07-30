@@ -27,7 +27,8 @@ func main() {
 			defer wg.Done()
 			list, errG := client.MovieList(ctx, &pb.MovieListRequest{})
 			if errG != nil {
-				log.Fatal(err)
+				fmt.Printf("%d %v\n", k, errG.Error())
+				return
 			}
 
 			fmt.Printf("%d %v\n", k, list)

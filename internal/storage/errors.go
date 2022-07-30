@@ -6,4 +6,5 @@ var (
 	ErrValidation     = errors.New("invalid data")
 	ErrMovieExists    = errors.New("movie already exists")
 	ErrMovieNotExists = errors.New("movie is not exists")
+	ErrTimeout        = errors.New("timeout")
 )
