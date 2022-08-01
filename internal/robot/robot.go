@@ -47,12 +47,12 @@ func (r *Robot) Add(args string) (*storage.Movie, error) {
 		return nil, errors.Wrapf(BadArgument, "%s", params[1])
 	}
 
-	m, err := r.storage.Add(params[0], year)
+	m, err := storage.NewMovie(params[0], year)
 	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return m, r.storage.Add(m)
 }
 
 func (r *Robot) Remove(args string) error {

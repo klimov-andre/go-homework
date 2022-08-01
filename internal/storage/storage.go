@@ -27,7 +27,8 @@ func NewStorage() *Storage {
 		pool:   connections.NewPool(poolSize, timeoutDuration),
 	}
 
-	_, _ = s.Add("The Shawshank Redemption", 1994)
+	m, _ := NewMovie("The Shawshank Redemption", 1994)
+	_ = s.Add(m)
 	return s
 }
 
@@ -49,9 +50,9 @@ func (s *Storage) List() ([]*Movie, error) {
 	return res, nil
 }
 
-func (s *Storage) Add(title string, year int) (*Movie, error) {
+func (s *Storage) Add(m *Movie) error {
 	if err := s.pool.Connect(); err != nil {
-		return nil, err
+		return err
 	}
 
 	s.mu.Lock()
@@ -60,16 +61,14 @@ func (s *Storage) Add(title string, year int) (*Movie, error) {
 		s.pool.Disconnect()
 	}()
 
-	m, err := newMovie(title, year, s.lastId)
-	if err != nil {
-		return nil, err
-	}
+	m.SetId(s.lastId)
+
 	if _, ok := s.data[m.Id()]; ok {
-		return nil, ErrMovieExists
+		return ErrMovieExists
 	}
 	s.lastId++
 	s.data[m.Id()] = m
-	return m, nil
+	return nil
 }
 
 func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {

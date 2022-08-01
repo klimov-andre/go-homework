@@ -11,7 +11,7 @@ type Movie struct {
 	year  int
 }
 
-func newMovie(title string, year int, id uint64) (*Movie, error) {
+func NewMovie(title string, year int) (*Movie, error) {
 	m := Movie{}
 	if err := m.SetTitle(title); err != nil {
 		return nil, err
@@ -19,7 +19,6 @@ func newMovie(title string, year int, id uint64) (*Movie, error) {
 	if err := m.SetYear(year); err != nil {
 		return nil, err
 	}
-	m.SetId(id)
 	return &m, nil
 }
 
