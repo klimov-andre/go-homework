@@ -42,7 +42,6 @@ func (s *Storage) List() ([]*Movie, error) {
 		s.pool.Disconnect()
 	}()
 
-	time.Sleep(time.Second * 10)
 	res := make([]*Movie, 0, len(s.data))
 	for _, v := range s.data {
 		res = append(res, v)

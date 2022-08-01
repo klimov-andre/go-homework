@@ -8,15 +8,11 @@ import (
 
 func main() {
 	log.Println("start main")
-	var storage = storagePkg.NewStorage()
+	storage := storagePkg.NewStorage()
 
-	var tgService *servicePkg.Service
-	{
-		s, err := servicePkg.NewService(storage)
-		if err != nil {
-			log.Fatal(err)
-		}
-		tgService = s
+	tgService, err := servicePkg.NewService(storage)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	go func() {
