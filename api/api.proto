@@ -18,7 +18,7 @@ service Admin {
   }
   rpc MovieUpdate(MovieUpdateRequest) returns (MovieUpdateResponse){
     option (google.api.http) = {
-      put: "/v1/movie"
+      post: "/v1/movie/update"
       body: "*"
     };
   }

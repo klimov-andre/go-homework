@@ -46,8 +46,10 @@
         "tags": [
           "Admin"
         ]
-      },
-      "put": {
+      }
+    },
+    "/v1/movie/update": {
+      "post": {
         "operationId": "Admin_MovieUpdate",
         "responses": {
           "200": {
