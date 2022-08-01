@@ -71,7 +71,7 @@ func (s *Storage) Add(m *Movie) error {
 	return nil
 }
 
-func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
+func (s *Storage) Update(id uint64, newMovie *Movie) (*Movie, error) {
 	if err := s.pool.Connect(); err != nil {
 		return nil, err
 	}
@@ -86,11 +86,11 @@ func (s *Storage) Update(id uint64, title string, year int) (*Movie, error) {
 		return nil, ErrMovieNotExists
 	}
 	m := s.data[id]
-	if err := m.SetTitle(title); err != nil {
+	if err := m.SetTitle(newMovie.Title()); err != nil {
 		return nil, err
 	}
-	if year != 0 {
-		if err := m.SetYear(year); err != nil {
+	if newMovie.Year() != 0 {
+		if err := m.SetYear(newMovie.Year()); err != nil {
 			return nil, err
 		}
 	}

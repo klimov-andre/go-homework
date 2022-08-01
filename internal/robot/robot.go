@@ -94,10 +94,10 @@ func (r *Robot) Update(args string) (*storage.Movie, error) {
 		}
 	}
 
-	m, err := r.storage.Update(id, params[1], year)
+	m, err := storage.NewMovie(params[1], year)
 	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return r.storage.Update(id, m)
 }
