@@ -11,7 +11,7 @@ type Movie struct {
 	year  int
 }
 
-func newMovie(title string, year int, id uint64) (*Movie, error) {
+func NewMovie(title string, year int) (*Movie, error) {
 	m := Movie{}
 	if err := m.SetTitle(title); err != nil {
 		return nil, err
@@ -19,7 +19,6 @@ func newMovie(title string, year int, id uint64) (*Movie, error) {
 	if err := m.SetYear(year); err != nil {
 		return nil, err
 	}
-	m.SetId(id)
 	return &m, nil
 }
 
@@ -37,7 +36,7 @@ func (m Movie) Title() string {
 
 func (m *Movie) SetTitle(title string) error {
 	if len(title) > 250 {
-		return errors.Wrap(TooLongTitle, title)
+		return errors.Wrapf(ErrValidation, "title is too long %s", title)
 	}
 	m.title = title
 	return nil
@@ -49,7 +48,7 @@ func (m Movie) Year() int {
 
 func (m *Movie) SetYear(year int) error {
 	if year < 1985 {
-		return errors.Wrap(BadYear, fmt.Sprintf("%v", year))
+		return errors.Wrapf(ErrValidation, "bad year %v", year)
 	}
 	m.year = year
 	return nil

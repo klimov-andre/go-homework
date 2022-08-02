@@ -7,13 +7,14 @@ import (
 	"homework/config"
 	"homework/internal/robot"
 	"homework/internal/router"
+	storagePkg "homework/internal/storage"
 	"log"
 )
 
 var (
-	helpCommand = "help"
-	listCommand = "list"
-	addCommand  = "add"
+	helpCommand   = "help"
+	listCommand   = "list"
+	addCommand    = "add"
 	removeCommand = "remove"
 	updateCommand = "update"
 )
@@ -21,18 +22,18 @@ var (
 type Service struct {
 	*router.Router
 
-	bot    *tgbotapi.BotAPI
+	bot   *tgbotapi.BotAPI
 	robot *robot.Robot
 }
 
-func NewService() (*Service, error) {
+func NewService(storage *storagePkg.Storage) (*Service, error) {
 	bot, err := tgbotapi.NewBotAPI(config.ApiKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "init tgbot")
 	}
 	bot.Debug = true
 
-	r, err := robot.NewRobot()
+	r, err := robot.NewRobot(storage)
 	if err != nil {
 		return nil, errors.Wrap(err, "init robot")
 	}

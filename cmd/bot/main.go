@@ -1,18 +1,26 @@
 package main
 
 import (
-	"homework/internal/service"
+	servicePkg "homework/internal/service"
+	storagePkg "homework/internal/storage"
 	"log"
 )
 
 func main() {
 	log.Println("start main")
-	service, err := service.NewService()
+	storage := storagePkg.NewStorage()
+
+	tgService, err := servicePkg.NewService(storage)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err := service.Run(); err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		if err := tgService.Run(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	go runREST()
+	runGRPC(storage)
 }

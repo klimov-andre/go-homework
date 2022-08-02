@@ -1,0 +1,73 @@
+syntax = "proto3";
+package ozon.dev.homework.api;
+option go_package = "homework/pkg/api;api";
+
+import "google/api/annotations.proto";
+
+service Admin {
+  rpc MovieCreate(MovieCreateRequest) returns (MovieCreateResponse){
+    option (google.api.http) = {
+      post: "/v1/movie"
+      body: "*"
+    };
+  }
+  rpc MovieList(MovieListRequest) returns (MovieListResponse){
+    option (google.api.http) = {
+      get: "/v1/movies"
+    };
+  }
+  rpc MovieUpdate(MovieUpdateRequest) returns (MovieUpdateResponse){
+    option (google.api.http) = {
+      post: "/v1/movie/update"
+      body: "*"
+    };
+  }
+  rpc MovieDelete(MovieDeleteRequest) returns (MovieDeleteResponse){
+    option (google.api.http) = {
+      delete: "/v1/movie/{id}"
+    };
+  }
+}
+
+message Movie {
+  uint64 id = 1;
+  string title = 2;
+  int32 year = 3;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieCreate endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieCreateRequest {
+  string title =1;
+  int32 year = 2;
+}
+message MovieCreateResponse{}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieList endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieListRequest{}
+message MovieListResponse {
+  repeated Movie movie = 1;
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieUpdate endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieUpdateRequest{
+    Movie movie = 1;
+}
+message MovieUpdateResponse {}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// MovieDelete endpoint messages
+// ---------------------------------------------------------------------------------------------------------------------
+
+message MovieDeleteRequest{
+  uint64 id = 1;
+}
+message MovieDeleteResponse {}

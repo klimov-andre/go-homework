@@ -12,12 +12,15 @@ type Robot struct {
 	storage *storage.Storage
 }
 
-func NewRobot() (*Robot, error) {
-	return &Robot{storage: storage.NewStorage()}, nil
+func NewRobot(storage *storage.Storage) (*Robot, error) {
+	return &Robot{storage: storage}, nil
 }
 
 func (r *Robot) List() ([]*storage.Movie, error) {
-	data := r.storage.List()
+	data, err := r.storage.List()
+	if err != nil {
+		return nil, err
+	}
 	if len(data) == 0 {
 		return nil, EmptyList
 	}
@@ -44,12 +47,12 @@ func (r *Robot) Add(args string) (*storage.Movie, error) {
 		return nil, errors.Wrapf(BadArgument, "%s", params[1])
 	}
 
-	m, err := r.storage.Add(params[0], year)
+	m, err := storage.NewMovie(params[0], year)
 	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return m, r.storage.Add(m)
 }
 
 func (r *Robot) Remove(args string) error {
@@ -91,10 +94,10 @@ func (r *Robot) Update(args string) (*storage.Movie, error) {
 		}
 	}
 
-	m, err := r.storage.Update(id, params[1], year)
+	m, err := storage.NewMovie(params[1], year)
 	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return r.storage.Update(id, m)
 }
