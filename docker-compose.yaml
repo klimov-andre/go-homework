@@ -1,0 +1,14 @@
+services:
+  postgresql:
+    image: postgres:14.4
+    restart: on-failure
+    container_name: postgres-movies
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: movies
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - "5555:5432"
