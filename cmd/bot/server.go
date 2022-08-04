@@ -15,7 +15,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func runGRPC(storage *storagePkg.Storage) {
+func runGRPC(storage storagePkg.Storage) {
 	listener, err := net.Listen(config.GrpcProtocol, config.GrpcPort)
 	if err != nil {
 		log.Fatal(err)

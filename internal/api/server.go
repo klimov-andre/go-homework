@@ -8,10 +8,10 @@ import (
 type implementation struct {
 	pb.UnimplementedAdminServer
 
-	storage *storagePkg.Storage
+	storage storagePkg.Storage
 }
 
-func New(storage *storagePkg.Storage) pb.AdminServer {
+func New(storage storagePkg.Storage) pb.AdminServer {
 	return &implementation{
 		storage: storage,
 	}

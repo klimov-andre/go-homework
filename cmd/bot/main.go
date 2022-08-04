@@ -5,7 +5,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"homework/config"
 	servicePkg "homework/internal/service"
-	storagePkg "homework/internal/storage"
+	locStoragePkg "homework/internal/storage/local"
 	"log"
 )
 
@@ -18,7 +18,7 @@ func main() {
 
 	defer conn.Close(context.Background())
 
-	storage := storagePkg.NewStorage()
+	storage := locStoragePkg.NewLocalStorage()
 
 	tgService, err := servicePkg.NewService(storage)
 	if err != nil {

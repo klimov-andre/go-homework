@@ -2,21 +2,22 @@ package robot
 
 import (
 	"github.com/pkg/errors"
-	"homework/internal/storage"
+	storagePkg "homework/internal/storage"
+	"homework/internal/storage/models"
 	"log"
 	"strconv"
 	"strings"
 )
 
 type Robot struct {
-	storage *storage.Storage
+	storage storagePkg.Storage
 }
 
-func NewRobot(storage *storage.Storage) (*Robot, error) {
+func NewRobot(storage storagePkg.Storage) (*Robot, error) {
 	return &Robot{storage: storage}, nil
 }
 
-func (r *Robot) List() ([]*storage.Movie, error) {
+func (r *Robot) List() ([]*models.Movie, error) {
 	data, err := r.storage.List()
 	if err != nil {
 		return nil, err
@@ -35,7 +36,7 @@ func (r *Robot) HelpFunc() string {
 		"/update <id> <title> {<year>} - remove movie with id and title, year is optional"
 }
 
-func (r *Robot) Add(args string) (*storage.Movie, error) {
+func (r *Robot) Add(args string) (*models.Movie, error) {
 	log.Printf("add command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) != 2 {
@@ -47,7 +48,7 @@ func (r *Robot) Add(args string) (*storage.Movie, error) {
 		return nil, errors.Wrapf(BadArgument, "%s", params[1])
 	}
 
-	m, err := storage.NewMovie(params[0], year)
+	m, err := models.NewMovie(params[0], year)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +75,7 @@ func (r *Robot) Remove(args string) error {
 	return nil
 }
 
-func (r *Robot) Update(args string) (*storage.Movie, error) {
+func (r *Robot) Update(args string) (*models.Movie, error) {
 	log.Printf("update command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) < 2 || len(params) > 3 {
@@ -94,7 +95,7 @@ func (r *Robot) Update(args string) (*storage.Movie, error) {
 		}
 	}
 
-	m, err := storage.NewMovie(params[1], year)
+	m, err := models.NewMovie(params[1], year)
 	if err != nil {
 		return nil, err
 	}
