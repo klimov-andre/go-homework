@@ -13,9 +13,9 @@ const (
 	timeoutDuration = 3 * time.Second
 )
 
-var _ storagePkg.Storage = (*Storage)(nil)
+var _ storagePkg.Storage = (*storage)(nil)
 
-type Storage struct {
+type storage struct {
 	data   map[uint64]*models.Movie
 	lastId uint64
 
@@ -25,7 +25,7 @@ type Storage struct {
 }
 
 func NewLocalStorage() storagePkg.Storage {
-	var s = &Storage{
+	var s = &storage{
 		data:   make(map[uint64]*models.Movie),
 		lastId: 1,
 		pool:   connections.NewPool(poolSize, timeoutDuration),
@@ -36,7 +36,7 @@ func NewLocalStorage() storagePkg.Storage {
 	return s
 }
 
-func (s *Storage) List() ([]*models.Movie, error) {
+func (s *storage) List() ([]*models.Movie, error) {
 	if err := s.pool.Connect(); err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (s *Storage) List() ([]*models.Movie, error) {
 	return res, nil
 }
 
-func (s *Storage) Add(m *models.Movie) error {
+func (s *storage) Add(m *models.Movie) error {
 	if err := s.pool.Connect(); err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (s *Storage) Add(m *models.Movie) error {
 	return nil
 }
 
-func (s *Storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
+func (s *storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
 	if err := s.pool.Connect(); err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (s *Storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, erro
 	return m, nil
 }
 
-func (s *Storage) Delete(id uint64) error {
+func (s *storage) Delete(id uint64) error {
 	if err := s.pool.Connect(); err != nil {
 		return err
 	}
