@@ -20,9 +20,9 @@ func (i *implementation) MovieList(_ context.Context, _ *pb.MovieListRequest) (*
 	result := make([]*pb.Movie, 0, len(list))
 	for _, m := range list {
 		result = append(result, &pb.Movie{
-			Id:    m.Id(),
-			Title: m.Title(),
-			Year:  int32(m.Year()),
+			Id:    m.Id,
+			Title: m.Title,
+			Year:  int32(m.Year),
 		})
 	}
 

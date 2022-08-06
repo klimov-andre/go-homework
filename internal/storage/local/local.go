@@ -67,11 +67,11 @@ func (s *storage) Add(m *models.Movie) error {
 
 	m.SetId(s.lastId)
 
-	if _, ok := s.data[m.Id()]; ok {
+	if _, ok := s.data[m.Id]; ok {
 		return storagePkg.ErrMovieExists
 	}
 	s.lastId++
-	s.data[m.Id()] = m
+	s.data[m.Id] = m
 	return nil
 }
 
@@ -90,11 +90,11 @@ func (s *storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, erro
 		return nil, storagePkg.ErrMovieNotExists
 	}
 	m := s.data[id]
-	if err := m.SetTitle(newMovie.Title()); err != nil {
+	if err := m.SetTitle(newMovie.Title); err != nil {
 		return nil, err
 	}
-	if newMovie.Year() != 0 {
-		if err := m.SetYear(newMovie.Year()); err != nil {
+	if newMovie.Year != 0 {
+		if err := m.SetYear(newMovie.Year); err != nil {
 			return nil, err
 		}
 	}
