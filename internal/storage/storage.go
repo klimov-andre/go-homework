@@ -5,7 +5,7 @@ import (
 )
 
 type Storage interface {
-	List() ([]*models.Movie, error)
+	List(limit, offset int) ([]*models.Movie, error)
 	Add(m *models.Movie) error
 	Update(id uint64, newMovie *models.Movie) (*models.Movie, error)
 	Delete(id uint64) error

@@ -36,7 +36,7 @@ func NewLocalStorage() storagePkg.Storage {
 	return s
 }
 
-func (s *storage) List() ([]*models.Movie, error) {
+func (s *storage) List(_, _ int) ([]*models.Movie, error) {
 	if err := s.pool.Connect(); err != nil {
 		return nil, err
 	}

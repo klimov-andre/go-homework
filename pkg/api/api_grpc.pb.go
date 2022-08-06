@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,10 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminClient interface {
-	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*MovieCreateResponse, error)
+	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
-	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*MovieUpdateResponse, error)
-	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*MovieDeleteResponse, error)
+	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type adminClient struct {
@@ -36,8 +37,8 @@ func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
 	return &adminClient{cc}
 }
 
-func (c *adminClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*MovieCreateResponse, error) {
-	out := new(MovieCreateResponse)
+func (c *adminClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,8 +55,8 @@ func (c *adminClient) MovieList(ctx context.Context, in *MovieListRequest, opts 
 	return out, nil
 }
 
-func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*MovieUpdateResponse, error) {
-	out := new(MovieUpdateResponse)
+func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,8 +64,8 @@ func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, o
 	return out, nil
 }
 
-func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*MovieDeleteResponse, error) {
-	out := new(MovieDeleteResponse)
+func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -76,10 +77,10 @@ func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, o
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility
 type AdminServer interface {
-	MovieCreate(context.Context, *MovieCreateRequest) (*MovieCreateResponse, error)
+	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
 	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
-	MovieUpdate(context.Context, *MovieUpdateRequest) (*MovieUpdateResponse, error)
-	MovieDelete(context.Context, *MovieDeleteRequest) (*MovieDeleteResponse, error)
+	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
+	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -87,16 +88,16 @@ type AdminServer interface {
 type UnimplementedAdminServer struct {
 }
 
-func (UnimplementedAdminServer) MovieCreate(context.Context, *MovieCreateRequest) (*MovieCreateResponse, error) {
+func (UnimplementedAdminServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
 func (UnimplementedAdminServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
-func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*MovieUpdateResponse, error) {
+func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
 }
-func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*MovieDeleteResponse, error) {
+func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}

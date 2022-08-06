@@ -23,7 +23,8 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMovieCreateResponse"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -55,7 +56,8 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMovieUpdateResponse"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -87,7 +89,8 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMovieDeleteResponse"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -111,8 +114,8 @@
         ]
       }
     },
-    "/v1/movies": {
-      "get": {
+    "/v1/movies/list": {
+      "post": {
         "operationId": "Admin_MovieList",
         "responses": {
           "200": {
@@ -128,6 +131,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/apiMovieListRequest"
+            }
+          }
+        ],
         "tags": [
           "Admin"
         ]
@@ -161,13 +174,22 @@
           "type": "integer",
           "format": "int32"
         }
-      }
+      },
+      "title": "MovieCreate endpoint messages"
     },
-    "apiMovieCreateResponse": {
-      "type": "object"
-    },
-    "apiMovieDeleteResponse": {
-      "type": "object"
+    "apiMovieListRequest": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "string",
+          "format": "int64"
+        },
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        }
+      },
+      "title": "MovieList endpoint messages"
     },
     "apiMovieListResponse": {
       "type": "object",
@@ -186,10 +208,8 @@
         "movie": {
           "$ref": "#/definitions/apiMovie"
         }
-      }
-    },
-    "apiMovieUpdateResponse": {
-      "type": "object"
+      },
+      "title": "MovieUpdate endpoint messages"
     },
     "protobufAny": {
       "type": "object",

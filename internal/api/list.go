@@ -9,8 +9,8 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieList(_ context.Context, _ *pb.MovieListRequest) (*pb.MovieListResponse, error) {
-	list, err := i.storage.List()
+func (i *implementation) MovieList(_ context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
+	list, err := i.storage.List(int(req.GetLimit()), int(req.GetOffset()))
 	if err != nil {
 		if errors.Is(err, connections.ErrTimeout) {
 			return nil, status.Error(codes.DeadlineExceeded, err.Error())

@@ -18,7 +18,7 @@ func NewRobot(storage storagePkg.Storage) (*Robot, error) {
 }
 
 func (r *Robot) List() ([]*models.Movie, error) {
-	data, err := r.storage.List()
+	data, err := r.storage.List(0, 0)
 	if err != nil {
 		return nil, err
 	}

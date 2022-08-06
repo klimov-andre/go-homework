@@ -5,13 +5,14 @@ import (
 	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"homework/internal/storage"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateRequest) (*pb.MovieUpdateResponse, error) {
+func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
 
 	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))
@@ -28,5 +29,5 @@ func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateReque
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &pb.MovieUpdateResponse{}, nil
+	return &emptypb.Empty{}, nil
 }

@@ -39,11 +39,11 @@ func (s *storage) getOneMovie(id uint64) (*models.Movie, error) {
 	return movie[0], nil
 }
 
-func (s *storage) List() ([]*models.Movie, error) {
-	query := "SELECT id, title, year FROM public.Movie"
+func (s *storage) List(limit, offset int) ([]*models.Movie, error) {
+	query := "SELECT id, title, year FROM public.Movie ORDER BY id ASC LIMIT $1 OFFSET $2"
 
 	var movies []*models.Movie
-	if err := pgxscan.Select(context.Background(), s.pool, &movies, query); err != nil {
+	if err := pgxscan.Select(context.Background(), s.pool, &movies, query, limit, offset); err != nil {
 		return nil, err
 	}
 

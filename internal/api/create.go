@@ -5,13 +5,14 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"homework/internal/storage"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateRequest) (*pb.MovieCreateResponse, error) {
+func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateRequest) (*emptypb.Empty, error) {
 	m, err := models.NewMovie(req.GetTitle(), int(req.GetYear()))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
@@ -25,5 +26,5 @@ func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateReque
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	return &pb.MovieCreateResponse{}, nil
+	return &emptypb.Empty{}, nil
 }
