@@ -29,26 +29,17 @@ func NewCache() *Cache {
 	return s
 }
 
-func (s *Cache) AddOrUpdate(id uint64, m *models.Movie) error {
-	if err := s.pool.Connect(); err != nil {
-		return err
-	}
-
+func (s *Cache) AddOrUpdate(id uint64, m *models.Movie) {
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
 		s.pool.Disconnect()
 	}()
 
-	s.data[m.Id] = m
-	return nil
+	s.data[id] = m
 }
 
 func (s *Cache) Delete(id uint64) error {
-	if err := s.pool.Connect(); err != nil {
-		return err
-	}
-
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
@@ -78,3 +69,4 @@ func (s *Cache) GetById(id uint64) (*models.Movie, error) {
 	}
 	return s.data[id], nil
 }
+

@@ -2,14 +2,14 @@ package main
 
 import (
 	servicePkg "homework/internal/service"
-	"homework/internal/storage/db"
+	"homework/internal/storage/facade"
 	"log"
 )
 
 func main() {
 	log.Println("start main")
 
-	storage, err := db.NewStorageDB()
+	storage, err := facade.NewStorage()
 	if err != nil {
 		log.Fatal(err)
 	}

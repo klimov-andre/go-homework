@@ -9,4 +9,5 @@ type Storage interface {
 	Add(m *models.Movie) error
 	Update(id uint64, newMovie *models.Movie) (*models.Movie, error)
 	Delete(id uint64) error
+	GetOneMovie(id uint64) (*models.Movie, error)
 }

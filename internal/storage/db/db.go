@@ -9,22 +9,22 @@ import (
 	"homework/internal/storage/models"
 )
 
-var _ storagePkg.Storage = (*storage)(nil)
+var _ storagePkg.Storage = (*Database)(nil)
 
-type storage struct {
+type Database struct {
 	pool *pgxpool.Pool
 }
 
-func NewStorageDB() (storagePkg.Storage, error) {
+func NewDatabase() (*Database, error) {
 	pool, err := pgxpool.Connect(context.Background(), config.DbDSN)
 	if err != nil {
 		return nil, err
 	}
 
-	return &storage{pool: pool}, nil
+	return &Database{pool: pool}, nil
 }
 
-func (s *storage) getOneMovie(id uint64) (*models.Movie, error) {
+func (s *Database) GetOneMovie(id uint64) (*models.Movie, error) {
 	query := "SELECT id, title, year FROM public.Movie where id=$1"
 
 	var movie []*models.Movie
@@ -39,7 +39,7 @@ func (s *storage) getOneMovie(id uint64) (*models.Movie, error) {
 	return movie[0], nil
 }
 
-func (s *storage) List(limit, offset int) ([]*models.Movie, error) {
+func (s *Database) List(limit, offset int) ([]*models.Movie, error) {
 	query := "SELECT id, title, year FROM public.Movie ORDER BY id ASC LIMIT $1 OFFSET $2"
 
 	var movies []*models.Movie
@@ -50,17 +50,18 @@ func (s *storage) List(limit, offset int) ([]*models.Movie, error) {
 	return movies, nil
 }
 
-func (s *storage) Add(m *models.Movie) error {
-	query := "INSERT INTO public.Movie (title, year) VALUES($1, $2)"
-	if _, err := s.pool.Exec(context.Background(), query, m.Title, m.Year); err != nil {
+func (s *Database) Add(m *models.Movie) error {
+	var id int
+	query := "INSERT INTO public.Movie (title, year) VALUES($1, $2) RETURNING id"
+	if err := s.pool.QueryRow(context.Background(), query, m.Title, m.Year).Scan(&id); err != nil {
 		return err
 	}
-
+	m.SetId(uint64(id))
 	return nil
 }
 
-func (s *storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
-	if _, err := s.getOneMovie(id); err != nil {
+func (s *Database) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
+	if _, err := s.GetOneMovie(id); err != nil {
 		return nil, err
 	}
 
@@ -72,8 +73,8 @@ func (s *storage) Update(id uint64, newMovie *models.Movie) (*models.Movie, erro
 	return newMovie, nil
 }
 
-func (s *storage) Delete(id uint64) error {
-	if _, err := s.getOneMovie(id); err != nil {
+func (s *Database) Delete(id uint64) error {
+	if _, err := s.GetOneMovie(id); err != nil {
 		return err
 	}
 
