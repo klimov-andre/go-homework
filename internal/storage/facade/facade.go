@@ -49,11 +49,12 @@ func (s *storageFacade) List(ctx context.Context, limit, offset int) ([]*models.
 }
 
 func (s *storageFacade) Add(ctx context.Context, m *models.Movie) error {
-	if err := s.db.Add(ctx, m); err != nil {
+	id, err := s.db.Add(ctx, m)
+	if err != nil {
 		return err
 	}
 
-	s.cache.AddOrUpdate(ctx, m.Id, m)
+	s.cache.AddOrUpdate(ctx, id, m)
 	return nil
 }
 

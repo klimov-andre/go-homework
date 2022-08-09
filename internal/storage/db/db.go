@@ -48,14 +48,13 @@ func (s *Database) List(ctx context.Context, limit, offset int) ([]*models.Movie
 	return movies, nil
 }
 
-func (s *Database) Add(ctx context.Context, m *models.Movie) error {
+func (s *Database) Add(ctx context.Context, m *models.Movie) (uint64, error) {
 	var id int
 	query := "INSERT INTO public.Movie (title, year) VALUES($1, $2) RETURNING id"
 	if err := s.pool.QueryRow(ctx, query, m.Title, m.Year).Scan(&id); err != nil {
-		return err
+		return 0, err
 	}
-	m.SetId(uint64(id))
-	return nil
+	return uint64(id), nil
 }
 
 func (s *Database) Update(ctx context.Context, id uint64, newMovie *models.Movie) (error) {
