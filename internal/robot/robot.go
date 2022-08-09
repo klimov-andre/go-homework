@@ -10,7 +10,10 @@ import (
 	"strings"
 )
 
-const defaultLimit = 100
+const (
+	defaultLimit = 100
+	defaultOrder = "ASC"
+)
 
 type Robot struct {
 	storage facade.StorageFacade
@@ -21,7 +24,7 @@ func NewRobot(storage facade.StorageFacade) (*Robot, error) {
 }
 
 func (r *Robot) List() ([]*models.Movie, error) {
-	data, err := r.storage.List(context.Background(), defaultLimit, 0)
+	data, err := r.storage.List(context.Background(), defaultLimit, 0, defaultOrder)
 	if err != nil {
 		return nil, err
 	}

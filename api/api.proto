@@ -42,6 +42,12 @@ message Movie {
   int32 year = 3;
 }
 
+enum ListOrder {
+  UNSPECIFIED = 0;
+  ASC = 1;
+  DESC = 2;
+}
+
 // MovieCreate endpoint messages
 message MovieCreateRequest {
   string title = 1;
@@ -52,6 +58,7 @@ message MovieCreateRequest {
 message MovieListRequest{
   int64 limit = 1;
   int64 offset = 2;
+  ListOrder order = 3;
 }
 message MovieListResponse {
   repeated Movie movie = 1;

@@ -10,7 +10,12 @@ import (
 )
 
 func (i *implementation) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
-	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()))
+	order := "ASC"
+	if grpcOrder := req.GetOrder(); grpcOrder != pb.ListOrder_UNSPECIFIED {
+		order = grpcOrder.String()
+	}
+
+	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), order)
 	if err != nil {
 		if errors.Is(err, connections.ErrTimeout) {
 			return nil, status.Error(codes.DeadlineExceeded, err.Error())

@@ -177,6 +177,15 @@
     }
   },
   "definitions": {
+    "apiListOrder": {
+      "type": "string",
+      "enum": [
+        "UNSPECIFIED",
+        "ASC",
+        "DESC"
+      ],
+      "default": "UNSPECIFIED"
+    },
     "apiMovie": {
       "type": "object",
       "properties": {
@@ -224,6 +233,9 @@
         "offset": {
           "type": "string",
           "format": "int64"
+        },
+        "order": {
+          "$ref": "#/definitions/apiListOrder"
         }
       },
       "title": "MovieList endpoint messages"

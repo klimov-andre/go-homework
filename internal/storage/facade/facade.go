@@ -11,7 +11,7 @@ import (
 var _ StorageFacade = (*storageFacade)(nil)
 
 type StorageFacade interface {
-	List(ctx context.Context, limit, offset int) ([]*models.Movie, error)
+	List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error)
 	Add(ctx context.Context, m *models.Movie) error
 	Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error)
 	Delete(ctx context.Context, id uint64) error
@@ -35,8 +35,8 @@ func NewStorage() (StorageFacade, error) {
 	}, err
 }
 
-func (s *storageFacade) List(ctx context.Context, limit, offset int) ([]*models.Movie, error) {
-	movies, err := s.db.List(ctx, limit, offset)
+func (s *storageFacade) List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error) {
+	movies, err := s.db.List(ctx, limit, offset, order)
 	if err != nil {
 		return nil, err
 	}

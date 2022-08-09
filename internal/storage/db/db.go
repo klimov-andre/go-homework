@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"homework/config"
@@ -32,8 +33,8 @@ func (s *Database) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, e
 	return movie, nil
 }
 
-func (s *Database) List(ctx context.Context, limit, offset int) ([]*models.Movie, error) {
-	query := "SELECT id, title, year FROM public.Movie ORDER BY id ASC LIMIT $1 OFFSET $2"
+func (s *Database) List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error) {
+	query := fmt.Sprintf("SELECT id, title, year FROM public.Movie ORDER BY id %s LIMIT $1 OFFSET $2", order)
 
 	var movies []*models.Movie
 	if err := pgxscan.Select(ctx, s.pool, &movies, query, limit, offset); err != nil {
