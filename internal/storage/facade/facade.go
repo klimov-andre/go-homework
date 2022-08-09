@@ -58,7 +58,7 @@ func (s *storageFacade) Add(ctx context.Context, m *models.Movie) error {
 }
 
 func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error) {
-	if _, err := s.db.Update(ctx, id, newMovie); err != nil {
+	if err := s.db.Update(ctx, id, newMovie); err != nil {
 		return nil, err
 	}
 

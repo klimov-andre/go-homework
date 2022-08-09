@@ -58,17 +58,16 @@ func (s *Database) Add(ctx context.Context, m *models.Movie) error {
 	return nil
 }
 
-func (s *Database) Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error) {
+func (s *Database) Update(ctx context.Context, id uint64, newMovie *models.Movie) (error) {
 	if _, err := s.GetOneMovie(ctx, id); err != nil {
-		return nil, err
+		return err
 	}
 
 	query := "UPDATE public.Movie SET title=$1, year=$2 WHERE id=$3"
 	if _, err := s.pool.Exec(ctx, query, newMovie.Title, newMovie.Year, id); err != nil {
-		return nil, err
+		return err
 	}
-	newMovie.SetId(id)
-	return newMovie, nil
+	return nil
 }
 
 func (s *Database) Delete(ctx context.Context, id uint64) error {
