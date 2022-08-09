@@ -71,10 +71,6 @@ func (s *Database) Update(ctx context.Context, id uint64, newMovie *models.Movie
 }
 
 func (s *Database) Delete(ctx context.Context, id uint64) error {
-	if _, err := s.GetOneMovie(ctx, id); err != nil {
-		return err
-	}
-
 	query := "DELETE FROM public.Movie WHERE id=$1"
 	if _, err := s.pool.Exec(ctx, query, id); err != nil {
 		return err
