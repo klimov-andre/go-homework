@@ -11,8 +11,9 @@ import (
 
 func (i *implementation) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
 	order := "ASC"
-	if grpcOrder := req.GetOrder(); grpcOrder != pb.ListOrder_UNSPECIFIED {
-		order = grpcOrder.String()
+	switch req.GetOrder() {
+	case pb.ListOrder_LIST_ORDER_DESC:
+		order = "DESC"
 	}
 
 	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), order)

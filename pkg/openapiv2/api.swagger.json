@@ -180,11 +180,11 @@
     "apiListOrder": {
       "type": "string",
       "enum": [
-        "UNSPECIFIED",
-        "ASC",
-        "DESC"
+        "LIST_ORDER_UNSPECIFIED",
+        "LIST_ORDER_ASC",
+        "LIST_ORDER_DESC"
       ],
-      "default": "UNSPECIFIED"
+      "default": "LIST_ORDER_UNSPECIFIED"
     },
     "apiMovie": {
       "type": "object",

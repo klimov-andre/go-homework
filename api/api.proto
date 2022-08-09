@@ -43,9 +43,9 @@ message Movie {
 }
 
 enum ListOrder {
-  UNSPECIFIED = 0;
-  ASC = 1;
-  DESC = 2;
+  LIST_ORDER_UNSPECIFIED = 0;
+  LIST_ORDER_ASC = 1;
+  LIST_ORDER_DESC = 2;
 }
 
 // MovieCreate endpoint messages
