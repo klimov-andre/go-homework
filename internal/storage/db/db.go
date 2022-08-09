@@ -5,7 +5,6 @@ import (
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"homework/config"
-	storagePkg "homework/internal/storage"
 	"homework/internal/storage/models"
 )
 
@@ -25,16 +24,12 @@ func NewDatabase() (*Database, error) {
 func (s *Database) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error) {
 	query := "SELECT id, title, year FROM public.Movie where id=$1"
 
-	var movie []*models.Movie
-	if err := pgxscan.Select(ctx, s.pool, &movie, query, id); err != nil {
+	movie := &models.Movie{}
+	if err := pgxscan.Get(ctx, s.pool, movie, query, id); err != nil {
 		return nil, err
 	}
 
-	if len(movie) == 0 {
-		return nil, storagePkg.ErrMovieNotExists
-	}
-
-	return movie[0], nil
+	return movie, nil
 }
 
 func (s *Database) List(ctx context.Context, limit, offset int) ([]*models.Movie, error) {
