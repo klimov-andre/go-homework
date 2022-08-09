@@ -1,17 +1,17 @@
 package api
 
 import (
-	storagePkg "homework/internal/storage"
+	"homework/internal/storage/facade"
 	pb "homework/pkg/api"
 )
 
 type implementation struct {
 	pb.UnimplementedAdminServer
 
-	storage *storagePkg.Storage
+	storage facade.StorageFacade
 }
 
-func New(storage *storagePkg.Storage) pb.AdminServer {
+func New(storage facade.StorageFacade) pb.AdminServer {
 	return &implementation{
 		storage: storage,
 	}

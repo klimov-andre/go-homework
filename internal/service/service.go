@@ -7,7 +7,7 @@ import (
 	"homework/config"
 	"homework/internal/robot"
 	"homework/internal/router"
-	storagePkg "homework/internal/storage"
+	"homework/internal/storage/facade"
 	"log"
 )
 
@@ -26,7 +26,7 @@ type Service struct {
 	robot *robot.Robot
 }
 
-func NewService(storage *storagePkg.Storage) (*Service, error) {
+func NewService(storage facade.StorageFacade) (*Service, error) {
 	bot, err := tgbotapi.NewBotAPI(config.ApiKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "init tgbot")

@@ -1,4 +1,4 @@
-package storage
+package models
 
 import (
 	"fmt"
@@ -6,9 +6,9 @@ import (
 )
 
 type Movie struct {
-	id    uint64
-	title string
-	year  int
+	Id    uint64
+	Title string
+	Year  int
 }
 
 func NewMovie(title string, year int) (*Movie, error) {
@@ -22,38 +22,26 @@ func NewMovie(title string, year int) (*Movie, error) {
 	return &m, nil
 }
 
-func (m Movie) Id() uint64 {
-	return m.id
-}
-
 func (m *Movie) SetId(id uint64) {
-	m.id = id
-}
-
-func (m Movie) Title() string {
-	return m.title
+	m.Id = id
 }
 
 func (m *Movie) SetTitle(title string) error {
 	if len(title) > 250 {
 		return errors.Wrapf(ErrValidation, "title is too long %s", title)
 	}
-	m.title = title
+	m.Title = title
 	return nil
-}
-
-func (m Movie) Year() int {
-	return m.year
 }
 
 func (m *Movie) SetYear(year int) error {
 	if year < 1985 {
 		return errors.Wrapf(ErrValidation, "bad year %v", year)
 	}
-	m.year = year
+	m.Year = year
 	return nil
 }
 
 func (m Movie) String() string {
-	return fmt.Sprintf("%d: %s / %d", m.Id(), m.Title(), m.Year())
+	return fmt.Sprintf("%d: %s / %d", m.Id, m.Title, m.Year)
 }

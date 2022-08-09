@@ -9,8 +9,14 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieList(_ context.Context, _ *pb.MovieListRequest) (*pb.MovieListResponse, error) {
-	list, err := i.storage.List()
+func (i *implementation) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
+	order := "ASC"
+	switch req.GetOrder() {
+	case pb.ListOrder_LIST_ORDER_DESC:
+		order = "DESC"
+	}
+
+	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), order)
 	if err != nil {
 		if errors.Is(err, connections.ErrTimeout) {
 			return nil, status.Error(codes.DeadlineExceeded, err.Error())
@@ -20,9 +26,9 @@ func (i *implementation) MovieList(_ context.Context, _ *pb.MovieListRequest) (*
 	result := make([]*pb.Movie, 0, len(list))
 	for _, m := range list {
 		result = append(result, &pb.Movie{
-			Id:    m.Id(),
-			Title: m.Title(),
-			Year:  int32(m.Year()),
+			Id:    m.Id,
+			Title: m.Title,
+			Year:  int32(m.Year),
 		})
 	}
 

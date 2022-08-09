@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,10 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AdminClient interface {
-	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*MovieCreateResponse, error)
+	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
-	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*MovieUpdateResponse, error)
-	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*MovieDeleteResponse, error)
+	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
 }
 
 type adminClient struct {
@@ -36,8 +38,8 @@ func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
 	return &adminClient{cc}
 }
 
-func (c *adminClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*MovieCreateResponse, error) {
-	out := new(MovieCreateResponse)
+func (c *adminClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -54,8 +56,8 @@ func (c *adminClient) MovieList(ctx context.Context, in *MovieListRequest, opts 
 	return out, nil
 }
 
-func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*MovieUpdateResponse, error) {
-	out := new(MovieUpdateResponse)
+func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -63,9 +65,18 @@ func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, o
 	return out, nil
 }
 
-func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*MovieDeleteResponse, error) {
-	out := new(MovieDeleteResponse)
+func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieDelete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *adminClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error) {
+	out := new(MovieGetOneResponse)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieGetOne", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +87,11 @@ func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, o
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility
 type AdminServer interface {
-	MovieCreate(context.Context, *MovieCreateRequest) (*MovieCreateResponse, error)
+	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
 	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
-	MovieUpdate(context.Context, *MovieUpdateRequest) (*MovieUpdateResponse, error)
-	MovieDelete(context.Context, *MovieDeleteRequest) (*MovieDeleteResponse, error)
+	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
+	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
+	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -87,17 +99,20 @@ type AdminServer interface {
 type UnimplementedAdminServer struct {
 }
 
-func (UnimplementedAdminServer) MovieCreate(context.Context, *MovieCreateRequest) (*MovieCreateResponse, error) {
+func (UnimplementedAdminServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
 func (UnimplementedAdminServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
-func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*MovieUpdateResponse, error) {
+func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
 }
-func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*MovieDeleteResponse, error) {
+func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
+}
+func (UnimplementedAdminServer) MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
@@ -184,6 +199,24 @@ func _Admin_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieGetOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).MovieGetOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Admin/MovieGetOne",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).MovieGetOne(ctx, req.(*MovieGetOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +239,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MovieDelete",
 			Handler:    _Admin_MovieDelete_Handler,
+		},
+		{
+			MethodName: "MovieGetOne",
+			Handler:    _Admin_MovieGetOne_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

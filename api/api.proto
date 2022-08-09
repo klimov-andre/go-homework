@@ -3,9 +3,10 @@ package ozon.dev.homework.api;
 option go_package = "homework/pkg/api;api";
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 service Admin {
-  rpc MovieCreate(MovieCreateRequest) returns (MovieCreateResponse){
+  rpc MovieCreate(MovieCreateRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       post: "/v1/movie"
       body: "*"
@@ -13,18 +14,24 @@ service Admin {
   }
   rpc MovieList(MovieListRequest) returns (MovieListResponse){
     option (google.api.http) = {
-      get: "/v1/movies"
+      post: "/v1/movies/list"
+      body: "*"
     };
   }
-  rpc MovieUpdate(MovieUpdateRequest) returns (MovieUpdateResponse){
+  rpc MovieUpdate(MovieUpdateRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       post: "/v1/movie/update"
       body: "*"
     };
   }
-  rpc MovieDelete(MovieDeleteRequest) returns (MovieDeleteResponse){
+  rpc MovieDelete(MovieDeleteRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       delete: "/v1/movie/{id}"
+    };
+  }
+  rpc MovieGetOne(MovieGetOneRequest) returns (MovieGetOneResponse){
+    option (google.api.http) = {
+      get: "/v1/movie/{id}"
     };
   }
 }
@@ -35,39 +42,42 @@ message Movie {
   int32 year = 3;
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
-// MovieCreate endpoint messages
-// ---------------------------------------------------------------------------------------------------------------------
+enum ListOrder {
+  LIST_ORDER_UNSPECIFIED = 0;
+  LIST_ORDER_ASC = 1;
+  LIST_ORDER_DESC = 2;
+}
 
+// MovieCreate endpoint messages
 message MovieCreateRequest {
-  string title =1;
+  string title = 1;
   int32 year = 2;
 }
-message MovieCreateResponse{}
 
-// ---------------------------------------------------------------------------------------------------------------------
 // MovieList endpoint messages
-// ---------------------------------------------------------------------------------------------------------------------
-
-message MovieListRequest{}
+message MovieListRequest{
+  int64 limit = 1;
+  int64 offset = 2;
+  ListOrder order = 3;
+}
 message MovieListResponse {
   repeated Movie movie = 1;
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
 // MovieUpdate endpoint messages
-// ---------------------------------------------------------------------------------------------------------------------
-
 message MovieUpdateRequest{
     Movie movie = 1;
 }
-message MovieUpdateResponse {}
 
-// ---------------------------------------------------------------------------------------------------------------------
 // MovieDelete endpoint messages
-// ---------------------------------------------------------------------------------------------------------------------
-
 message MovieDeleteRequest{
   uint64 id = 1;
 }
-message MovieDeleteResponse {}
+
+// MovieGetOne endpoint messages
+message MovieGetOneRequest {
+  uint64 id = 1;
+}
+message MovieGetOneResponse {
+  Movie movie = 1;
+}

@@ -25,7 +25,7 @@ func main() {
 		wg.Add(1)
 		go func(k int) {
 			defer wg.Done()
-			list, errG := client.MovieList(ctx, &pb.MovieListRequest{})
+			list, errG := client.MovieList(ctx, &pb.MovieListRequest{Limit: 2, Offset: 0})
 			if errG != nil {
 				fmt.Printf("%d %v\n", k, errG.Error())
 				return

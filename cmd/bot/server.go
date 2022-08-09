@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config"
-	storagePkg "homework/internal/storage"
+	"homework/internal/storage/facade"
 	"log"
 	"net"
 	"net/http"
@@ -15,7 +15,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func runGRPC(storage *storagePkg.Storage) {
+func runGRPC(storage facade.StorageFacade) {
 	listener, err := net.Listen(config.GrpcProtocol, config.GrpcPort)
 	if err != nil {
 		log.Fatal(err)
