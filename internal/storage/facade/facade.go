@@ -2,20 +2,27 @@ package facade
 
 import (
 	"github.com/pkg/errors"
-	"homework/internal/storage"
 	"homework/internal/storage/cache"
 	"homework/internal/storage/db"
 	"homework/internal/storage/models"
 )
 
-var _ storage.Storage = (*storageFacade)(nil)
+var _ StorageFacade = (*storageFacade)(nil)
+
+type StorageFacade interface {
+	List(limit, offset int) ([]*models.Movie, error)
+	Add(m *models.Movie) error
+	Update(id uint64, newMovie *models.Movie) (*models.Movie, error)
+	Delete(id uint64) error
+	GetOneMovie(id uint64) (*models.Movie, error)
+}
 
 type storageFacade struct {
 	db *db.Database
 	cache *cache.Cache
 }
 
-func NewStorage() (storage.Storage, error) {
+func NewStorage() (StorageFacade, error) {
 	db, err := db.NewDatabase()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not init database")

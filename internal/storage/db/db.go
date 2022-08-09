@@ -9,8 +9,6 @@ import (
 	"homework/internal/storage/models"
 )
 
-var _ storagePkg.Storage = (*Database)(nil)
-
 type Database struct {
 	pool *pgxpool.Pool
 }

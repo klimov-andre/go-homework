@@ -2,7 +2,7 @@ package robot
 
 import (
 	"github.com/pkg/errors"
-	storagePkg "homework/internal/storage"
+	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
 	"log"
 	"strconv"
@@ -10,10 +10,10 @@ import (
 )
 
 type Robot struct {
-	storage storagePkg.Storage
+	storage facade.StorageFacade
 }
 
-func NewRobot(storage storagePkg.Storage) (*Robot, error) {
+func NewRobot(storage facade.StorageFacade) (*Robot, error) {
 	return &Robot{storage: storage}, nil
 }
 
