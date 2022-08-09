@@ -11,8 +11,8 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieDelete(_ context.Context, req *pb.MovieDeleteRequest) (*emptypb.Empty, error) {
-	if err := i.storage.Delete(req.GetId()); err != nil {
+func (i *implementation) MovieDelete(ctx context.Context, req *pb.MovieDeleteRequest) (*emptypb.Empty, error) {
+	if err := i.storage.Delete(ctx, req.GetId()); err != nil {
 		if errors.Is(err, storagePkg.ErrMovieNotExists) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		}

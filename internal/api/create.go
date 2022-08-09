@@ -12,13 +12,13 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieCreate(_ context.Context, req *pb.MovieCreateRequest) (*emptypb.Empty, error) {
+func (i *implementation) MovieCreate(ctx context.Context, req *pb.MovieCreateRequest) (*emptypb.Empty, error) {
 	m, err := models.NewMovie(req.GetTitle(), int(req.GetYear()))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := i.storage.Add(m); err != nil {
+	if err := i.storage.Add(ctx, m); err != nil {
 		if errors.Is(err, storage.ErrMovieExists) {
 			return nil, status.Error(codes.AlreadyExists, err.Error())
 		} else if errors.Is(err, connections.ErrTimeout) {

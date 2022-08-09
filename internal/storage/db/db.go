@@ -22,11 +22,11 @@ func NewDatabase() (*Database, error) {
 	return &Database{pool: pool}, nil
 }
 
-func (s *Database) GetOneMovie(id uint64) (*models.Movie, error) {
+func (s *Database) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error) {
 	query := "SELECT id, title, year FROM public.Movie where id=$1"
 
 	var movie []*models.Movie
-	if err := pgxscan.Select(context.Background(), s.pool, &movie, query, id); err != nil {
+	if err := pgxscan.Select(ctx, s.pool, &movie, query, id); err != nil {
 		return nil, err
 	}
 
@@ -37,47 +37,47 @@ func (s *Database) GetOneMovie(id uint64) (*models.Movie, error) {
 	return movie[0], nil
 }
 
-func (s *Database) List(limit, offset int) ([]*models.Movie, error) {
+func (s *Database) List(ctx context.Context, limit, offset int) ([]*models.Movie, error) {
 	query := "SELECT id, title, year FROM public.Movie ORDER BY id ASC LIMIT $1 OFFSET $2"
 
 	var movies []*models.Movie
-	if err := pgxscan.Select(context.Background(), s.pool, &movies, query, limit, offset); err != nil {
+	if err := pgxscan.Select(ctx, s.pool, &movies, query, limit, offset); err != nil {
 		return nil, err
 	}
 
 	return movies, nil
 }
 
-func (s *Database) Add(m *models.Movie) error {
+func (s *Database) Add(ctx context.Context, m *models.Movie) error {
 	var id int
 	query := "INSERT INTO public.Movie (title, year) VALUES($1, $2) RETURNING id"
-	if err := s.pool.QueryRow(context.Background(), query, m.Title, m.Year).Scan(&id); err != nil {
+	if err := s.pool.QueryRow(ctx, query, m.Title, m.Year).Scan(&id); err != nil {
 		return err
 	}
 	m.SetId(uint64(id))
 	return nil
 }
 
-func (s *Database) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
-	if _, err := s.GetOneMovie(id); err != nil {
+func (s *Database) Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error) {
+	if _, err := s.GetOneMovie(ctx, id); err != nil {
 		return nil, err
 	}
 
 	query := "UPDATE public.Movie SET title=$1, year=$2 WHERE id=$3"
-	if _, err := s.pool.Exec(context.Background(), query, newMovie.Title, newMovie.Year, id); err != nil {
+	if _, err := s.pool.Exec(ctx, query, newMovie.Title, newMovie.Year, id); err != nil {
 		return nil, err
 	}
 	newMovie.SetId(id)
 	return newMovie, nil
 }
 
-func (s *Database) Delete(id uint64) error {
-	if _, err := s.GetOneMovie(id); err != nil {
+func (s *Database) Delete(ctx context.Context, id uint64) error {
+	if _, err := s.GetOneMovie(ctx, id); err != nil {
 		return err
 	}
 
 	query := "DELETE FROM public.Movie WHERE id=$1"
-	if _, err := s.pool.Exec(context.Background(), query, id); err != nil {
+	if _, err := s.pool.Exec(ctx, query, id); err != nil {
 		return err
 	}
 

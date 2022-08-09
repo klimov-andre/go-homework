@@ -1,6 +1,7 @@
 package robot
 
 import (
+	"context"
 	"github.com/pkg/errors"
 	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
@@ -8,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 )
+
+const defaultLimit = 100
 
 type Robot struct {
 	storage facade.StorageFacade
@@ -18,7 +21,7 @@ func NewRobot(storage facade.StorageFacade) (*Robot, error) {
 }
 
 func (r *Robot) List() ([]*models.Movie, error) {
-	data, err := r.storage.List(0, 0)
+	data, err := r.storage.List(context.Background(), defaultLimit, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +56,7 @@ func (r *Robot) Add(args string) (*models.Movie, error) {
 		return nil, err
 	}
 
-	return m, r.storage.Add(m)
+	return m, r.storage.Add(context.Background(), m)
 }
 
 func (r *Robot) Remove(args string) error {
@@ -68,7 +71,7 @@ func (r *Robot) Remove(args string) error {
 		return errors.Wrapf(BadArgument, "%s", params[0])
 	}
 
-	if err = r.storage.Delete(id); err != nil {
+	if err = r.storage.Delete(context.Background(), id); err != nil {
 		return err
 	}
 
@@ -100,5 +103,5 @@ func (r *Robot) Update(args string) (*models.Movie, error) {
 		return nil, err
 	}
 
-	return r.storage.Update(id, m)
+	return r.storage.Update(context.Background(), id, m)
 }

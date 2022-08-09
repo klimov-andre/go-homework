@@ -12,7 +12,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
+func (i *implementation) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
 
 	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))
@@ -20,7 +20,7 @@ func (i *implementation) MovieUpdate(_ context.Context, req *pb.MovieUpdateReque
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if _, err := i.storage.Update(m.GetId(), upd); err != nil {
+	if _, err := i.storage.Update(ctx, m.GetId(), upd); err != nil {
 		if errors.Is(err, storage.ErrMovieNotExists) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		} else if errors.Is(err, connections.ErrTimeout) {

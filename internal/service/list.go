@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-func (s *Service) List(args string) (string, error) {
+func (s *Service) List(_ string) (string, error) {
 	list, err := s.robot.List()
 	if err != nil {
 		return "", err

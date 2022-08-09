@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	"sync"
@@ -29,7 +30,7 @@ func NewCache() *Cache {
 	return s
 }
 
-func (s *Cache) AddOrUpdate(id uint64, m *models.Movie) {
+func (s *Cache) AddOrUpdate(_ context.Context, id uint64, m *models.Movie) {
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
@@ -38,7 +39,7 @@ func (s *Cache) AddOrUpdate(id uint64, m *models.Movie) {
 	s.data[id] = m
 }
 
-func (s *Cache) Delete(id uint64) error {
+func (s *Cache) Delete(_ context.Context, id uint64) error {
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
@@ -51,7 +52,7 @@ func (s *Cache) Delete(id uint64) error {
 	return nil
 }
 
-func (s *Cache) GetById(id uint64) (*models.Movie, error) {
+func (s *Cache) GetById(_ context.Context, id uint64) (*models.Movie, error) {
 	if err := s.pool.Connect(); err != nil {
 		return nil, err
 	}

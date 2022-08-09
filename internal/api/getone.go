@@ -10,8 +10,8 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieGetOne(_ context.Context, req *pb.MovieGetOneRequest) (*pb.MovieGetOneResponse, error) {
-	m, err := i.storage.GetOneMovie(req.GetId())
+func (i *implementation) MovieGetOne(ctx context.Context, req *pb.MovieGetOneRequest) (*pb.MovieGetOneResponse, error) {
+	m, err := i.storage.GetOneMovie(ctx, req.GetId())
 	if err != nil {
 		if errors.Is(err, storagePkg.ErrMovieNotExists) {
 			return nil, status.Error(codes.NotFound, err.Error())

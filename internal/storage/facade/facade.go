@@ -1,6 +1,7 @@
 package facade
 
 import (
+	"context"
 	"github.com/pkg/errors"
 	"homework/internal/storage/cache"
 	"homework/internal/storage/db"
@@ -10,11 +11,11 @@ import (
 var _ StorageFacade = (*storageFacade)(nil)
 
 type StorageFacade interface {
-	List(limit, offset int) ([]*models.Movie, error)
-	Add(m *models.Movie) error
-	Update(id uint64, newMovie *models.Movie) (*models.Movie, error)
-	Delete(id uint64) error
-	GetOneMovie(id uint64) (*models.Movie, error)
+	List(ctx context.Context, limit, offset int) ([]*models.Movie, error)
+	Add(ctx context.Context, m *models.Movie) error
+	Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error)
+	Delete(ctx context.Context, id uint64) error
+	GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error)
 }
 
 type storageFacade struct {
@@ -34,43 +35,43 @@ func NewStorage() (StorageFacade, error) {
 	}, err
 }
 
-func (s *storageFacade) List(limit, offset int) ([]*models.Movie, error) {
-	movies, err := s.db.List(limit, offset)
+func (s *storageFacade) List(ctx context.Context, limit, offset int) ([]*models.Movie, error) {
+	movies, err := s.db.List(ctx, limit, offset)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, m := range movies {
-		s.cache.AddOrUpdate(m.Id, m)
+		s.cache.AddOrUpdate(ctx, m.Id, m)
 	}
 
 	return movies, nil
 }
 
-func (s *storageFacade) Add(m *models.Movie) error {
-	if err := s.db.Add(m); err != nil {
+func (s *storageFacade) Add(ctx context.Context, m *models.Movie) error {
+	if err := s.db.Add(ctx, m); err != nil {
 		return err
 	}
 
-	s.cache.AddOrUpdate(m.Id, m)
+	s.cache.AddOrUpdate(ctx, m.Id, m)
 	return nil
 }
 
-func (s *storageFacade) Update(id uint64, newMovie *models.Movie) (*models.Movie, error) {
-	if _, err := s.db.Update(id, newMovie); err != nil {
+func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error) {
+	if _, err := s.db.Update(ctx, id, newMovie); err != nil {
 		return nil, err
 	}
 
-	s.cache.AddOrUpdate(id, newMovie)
+	s.cache.AddOrUpdate(ctx, id, newMovie)
 	return newMovie, nil
 }
 
-func (s *storageFacade) Delete(id uint64) error {
-	if err := s.db.Delete(id); err != nil {
+func (s *storageFacade) Delete(ctx context.Context, id uint64) error {
+	if err := s.db.Delete(ctx, id); err != nil {
 		return err
 	}
 
-	if err := s.cache.Delete(id); err != nil {
+	if err := s.cache.Delete(ctx, id); err != nil {
 		if !errors.Is(err, cache.ErrCacheNotExists) {
 			return err
 		}
@@ -78,8 +79,8 @@ func (s *storageFacade) Delete(id uint64) error {
 	return nil
 }
 
-func (s *storageFacade) GetOneMovie(id uint64) (*models.Movie, error) {
-	m, err := s.cache.GetById(id)
+func (s *storageFacade) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error) {
+	m, err := s.cache.GetById(ctx, id)
 	if err != nil && !errors.Is(err, cache.ErrCacheNotExists) {
 		return nil, err
 	}
@@ -87,11 +88,11 @@ func (s *storageFacade) GetOneMovie(id uint64) (*models.Movie, error) {
 		return m, nil
 	}
 
-	m, err = s.db.GetOneMovie(id)
+	m, err = s.db.GetOneMovie(ctx, id)
 	if err != nil {
 		return nil, err
 	}
-	s.cache.AddOrUpdate(id, m)
+	s.cache.AddOrUpdate(ctx, id, m)
 
 	return m, nil
 }
