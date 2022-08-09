@@ -83,6 +83,35 @@
       }
     },
     "/v1/movie/{id}": {
+      "get": {
+        "operationId": "Admin_MovieGetOne",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/apiMovieGetOneResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "format": "uint64"
+          }
+        ],
+        "tags": [
+          "Admin"
+        ]
+      },
       "delete": {
         "operationId": "Admin_MovieDelete",
         "responses": {
@@ -176,6 +205,14 @@
         }
       },
       "title": "MovieCreate endpoint messages"
+    },
+    "apiMovieGetOneResponse": {
+      "type": "object",
+      "properties": {
+        "movie": {
+          "$ref": "#/definitions/apiMovie"
+        }
+      }
     },
     "apiMovieListRequest": {
       "type": "object",

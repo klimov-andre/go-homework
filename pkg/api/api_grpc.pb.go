@@ -27,6 +27,7 @@ type AdminClient interface {
 	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
 }
 
 type adminClient struct {
@@ -73,6 +74,15 @@ func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, o
 	return out, nil
 }
 
+func (c *adminClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error) {
+	out := new(MovieGetOneResponse)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieGetOne", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AdminServer is the server API for Admin service.
 // All implementations must embed UnimplementedAdminServer
 // for forward compatibility
@@ -81,6 +91,7 @@ type AdminServer interface {
 	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
 	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
+	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
 	mustEmbedUnimplementedAdminServer()
 }
 
@@ -99,6 +110,9 @@ func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest
 }
 func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
+}
+func (UnimplementedAdminServer) MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
 }
 func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
 
@@ -185,6 +199,24 @@ func _Admin_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Admin_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieGetOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AdminServer).MovieGetOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Admin/MovieGetOne",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AdminServer).MovieGetOne(ctx, req.(*MovieGetOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -207,6 +239,10 @@ var Admin_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MovieDelete",
 			Handler:    _Admin_MovieDelete_Handler,
+		},
+		{
+			MethodName: "MovieGetOne",
+			Handler:    _Admin_MovieGetOne_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

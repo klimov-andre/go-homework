@@ -76,11 +76,15 @@ func (s *storageFacade) GetOneMovie(id uint64) (*models.Movie, error) {
 	if err != nil && !errors.Is(err, cache.ErrCacheNotExists) {
 		return nil, err
 	}
+	if m != nil {
+		return m, nil
+	}
 
 	m, err = s.db.GetOneMovie(id)
 	if err != nil {
 		return nil, err
 	}
+	s.cache.AddOrUpdate(id, m)
 
 	return m, nil
 }

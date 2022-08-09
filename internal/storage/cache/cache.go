@@ -33,7 +33,6 @@ func (s *Cache) AddOrUpdate(id uint64, m *models.Movie) {
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
-		s.pool.Disconnect()
 	}()
 
 	s.data[id] = m
@@ -43,7 +42,6 @@ func (s *Cache) Delete(id uint64) error {
 	s.mu.Lock()
 	defer func() {
 		s.mu.Unlock()
-		s.pool.Disconnect()
 	}()
 
 	if _, ok := s.data[id]; !ok {

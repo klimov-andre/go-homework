@@ -29,6 +29,11 @@ service Admin {
       delete: "/v1/movie/{id}"
     };
   }
+  rpc MovieGetOne(MovieGetOneRequest) returns (MovieGetOneResponse){
+    option (google.api.http) = {
+      get: "/v1/movie/{id}"
+    };
+  }
 }
 
 message Movie {
@@ -60,4 +65,12 @@ message MovieUpdateRequest{
 // MovieDelete endpoint messages
 message MovieDeleteRequest{
   uint64 id = 1;
+}
+
+// MovieGetOne endpoint messages
+message MovieGetOneRequest {
+  uint64 id = 1;
+}
+message MovieGetOneResponse {
+  Movie movie = 1;
 }
