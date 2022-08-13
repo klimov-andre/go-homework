@@ -8,7 +8,6 @@ import (
 	"homework/config"
 	pb "homework/pkg/api"
 	"log"
-	"sync"
 )
 
 func main() {
@@ -17,24 +16,24 @@ func main() {
 		log.Panic(err)
 	}
 
-	client := pb.NewAdminClient(conns)
+	client := pb.NewGatewayClient(conns)
 
-	var wg = sync.WaitGroup{}
+	//var wg = sync.WaitGroup{}
 	ctx := context.Background()
-	for i := 0; i < 100; i++ {
-		wg.Add(1)
-		go func(k int) {
-			defer wg.Done()
+	//for i := 0; i < 100; i++ {
+	//	wg.Add(1)
+	//	go func(k int) {
+	//		defer wg.Done()
 			list, errG := client.MovieList(ctx, &pb.MovieListRequest{Limit: 2, Offset: 0})
 			if errG != nil {
-				fmt.Printf("%d %v\n", k, errG.Error())
+				fmt.Printf("%d %v\n", 1, errG.Error())
 				return
 			}
 
-			fmt.Printf("%d %v\n", k, list)
-		}(i)
+		fmt.Printf("%d %v\n",1, list)
+		//}(i)
 
-	}
+	//}
 
-	wg.Wait()
+	//wg.Wait()
 }

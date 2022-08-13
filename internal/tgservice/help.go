@@ -1,4 +1,4 @@
-package service
+package tgservice
 
 func (s *Service) Help(_ string) (string, error) {
 	return "/help - list commands\n" +

@@ -1,15 +1,15 @@
 package main
 
 import (
-	servicePkg "homework/internal/service"
-	"homework/internal/storage/facade"
+	storagePkg "homework/internal/api/storage/client"
+	servicePkg "homework/internal/tgservice"
 	"log"
 )
 
 func main() {
-	log.Println("start main")
+	log.Println("start gateway service")
 
-	storage, err := facade.NewStorage()
+	storage, err := storagePkg.New()
 	if err != nil {
 		log.Fatal(err)
 	}

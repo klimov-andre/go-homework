@@ -6,12 +6,12 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config"
+	apiPkg "homework/internal/api/gateway/server"
 	"homework/internal/storage/facade"
 	"log"
 	"net"
 	"net/http"
 
-	apiPkg "homework/internal/api"
 	pb "homework/pkg/api"
 )
 
@@ -22,7 +22,7 @@ func runGRPC(storage facade.StorageFacade) {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterAdminServer(grpcServer, apiPkg.New(storage))
+	pb.RegisterGatewayServer(grpcServer, apiPkg.New(storage))
 
 	if err = grpcServer.Serve(listener); err != nil {
 		log.Fatal(err)
@@ -37,7 +37,7 @@ func runREST() {
 	// Register gRPC server endpoint
 	mux := runtime.NewServeMux()
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	if err := pb.RegisterAdminHandlerFromEndpoint(ctx, mux, config.GrpcPort, opts); err != nil {
+	if err := pb.RegisterGatewayHandlerFromEndpoint(ctx, mux, config.GrpcPort, opts); err != nil {
 		log.Fatal(err)
 	}
 

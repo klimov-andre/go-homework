@@ -19,10 +19,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// AdminClient is the client API for Admin service.
+// GatewayClient is the client API for Gateway tgservice.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AdminClient interface {
+type GatewayClient interface {
 	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -30,219 +30,449 @@ type AdminClient interface {
 	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
 }
 
-type adminClient struct {
+type gatewayClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewAdminClient(cc grpc.ClientConnInterface) AdminClient {
-	return &adminClient{cc}
+func NewGatewayClient(cc grpc.ClientConnInterface) GatewayClient {
+	return &gatewayClient{cc}
 }
 
-func (c *adminClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *gatewayClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieCreate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminClient) MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
+func (c *gatewayClient) MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
 	out := new(MovieListResponse)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieList", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieList", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *gatewayClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieUpdate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieUpdate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *gatewayClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieDelete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieDelete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *adminClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error) {
+func (c *gatewayClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error) {
 	out := new(MovieGetOneResponse)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Admin/MovieGetOne", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieGetOne", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// AdminServer is the server API for Admin service.
-// All implementations must embed UnimplementedAdminServer
+// GatewayServer is the server API for Gateway tgservice.
+// All implementations must embed UnimplementedGatewayServer
 // for forward compatibility
-type AdminServer interface {
+type GatewayServer interface {
 	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
 	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
 	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
-	mustEmbedUnimplementedAdminServer()
+	mustEmbedUnimplementedGatewayServer()
 }
 
-// UnimplementedAdminServer must be embedded to have forward compatible implementations.
-type UnimplementedAdminServer struct {
+// UnimplementedGatewayServer must be embedded to have forward compatible implementations.
+type UnimplementedGatewayServer struct {
 }
 
-func (UnimplementedAdminServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedGatewayServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
-func (UnimplementedAdminServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
+func (UnimplementedGatewayServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
-func (UnimplementedAdminServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
+func (UnimplementedGatewayServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
 }
-func (UnimplementedAdminServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
+func (UnimplementedGatewayServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
 }
-func (UnimplementedAdminServer) MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error) {
+func (UnimplementedGatewayServer) MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
 }
-func (UnimplementedAdminServer) mustEmbedUnimplementedAdminServer() {}
+func (UnimplementedGatewayServer) mustEmbedUnimplementedGatewayServer() {}
 
-// UnsafeAdminServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AdminServer will
+// UnsafeGatewayServer may be embedded to opt out of forward compatibility for this tgservice.
+// Use of this interface is not recommended, as added methods to GatewayServer will
 // result in compilation errors.
-type UnsafeAdminServer interface {
-	mustEmbedUnimplementedAdminServer()
+type UnsafeGatewayServer interface {
+	mustEmbedUnimplementedGatewayServer()
 }
 
-func RegisterAdminServer(s grpc.ServiceRegistrar, srv AdminServer) {
-	s.RegisterService(&Admin_ServiceDesc, srv)
+func RegisterGatewayServer(s grpc.ServiceRegistrar, srv GatewayServer) {
+	s.RegisterService(&Gateway_ServiceDesc, srv)
 }
 
-func _Admin_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Gateway_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieCreateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).MovieCreate(ctx, in)
+		return srv.(GatewayServer).MovieCreate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Admin/MovieCreate",
+		FullMethod: "/ozon.dev.homework.api.Gateway/MovieCreate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).MovieCreate(ctx, req.(*MovieCreateRequest))
+		return srv.(GatewayServer).MovieCreate(ctx, req.(*MovieCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Gateway_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).MovieList(ctx, in)
+		return srv.(GatewayServer).MovieList(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Admin/MovieList",
+		FullMethod: "/ozon.dev.homework.api.Gateway/MovieList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).MovieList(ctx, req.(*MovieListRequest))
+		return srv.(GatewayServer).MovieList(ctx, req.(*MovieListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_MovieUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Gateway_MovieUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieUpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).MovieUpdate(ctx, in)
+		return srv.(GatewayServer).MovieUpdate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Admin/MovieUpdate",
+		FullMethod: "/ozon.dev.homework.api.Gateway/MovieUpdate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).MovieUpdate(ctx, req.(*MovieUpdateRequest))
+		return srv.(GatewayServer).MovieUpdate(ctx, req.(*MovieUpdateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Gateway_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieDeleteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).MovieDelete(ctx, in)
+		return srv.(GatewayServer).MovieDelete(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Admin/MovieDelete",
+		FullMethod: "/ozon.dev.homework.api.Gateway/MovieDelete",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).MovieDelete(ctx, req.(*MovieDeleteRequest))
+		return srv.(GatewayServer).MovieDelete(ctx, req.(*MovieDeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Admin_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Gateway_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieGetOneRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AdminServer).MovieGetOne(ctx, in)
+		return srv.(GatewayServer).MovieGetOne(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Admin/MovieGetOne",
+		FullMethod: "/ozon.dev.homework.api.Gateway/MovieGetOne",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServer).MovieGetOne(ctx, req.(*MovieGetOneRequest))
+		return srv.(GatewayServer).MovieGetOne(ctx, req.(*MovieGetOneRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Admin_ServiceDesc is the grpc.ServiceDesc for Admin service.
+// Gateway_ServiceDesc is the grpc.ServiceDesc for Gateway tgservice.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Admin_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "ozon.dev.homework.api.Admin",
-	HandlerType: (*AdminServer)(nil),
+var Gateway_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ozon.dev.homework.api.Gateway",
+	HandlerType: (*GatewayServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "MovieCreate",
-			Handler:    _Admin_MovieCreate_Handler,
+			Handler:    _Gateway_MovieCreate_Handler,
 		},
 		{
 			MethodName: "MovieList",
-			Handler:    _Admin_MovieList_Handler,
+			Handler:    _Gateway_MovieList_Handler,
 		},
 		{
 			MethodName: "MovieUpdate",
-			Handler:    _Admin_MovieUpdate_Handler,
+			Handler:    _Gateway_MovieUpdate_Handler,
 		},
 		{
 			MethodName: "MovieDelete",
-			Handler:    _Admin_MovieDelete_Handler,
+			Handler:    _Gateway_MovieDelete_Handler,
 		},
 		{
 			MethodName: "MovieGetOne",
-			Handler:    _Admin_MovieGetOne_Handler,
+			Handler:    _Gateway_MovieGetOne_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api.proto",
+}
+
+// StorageClient is the client API for Storage tgservice.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StorageClient interface {
+	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
+	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
+}
+
+type storageClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
+	return &storageClient{cc}
+}
+
+func (c *storageClient) MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageClient) MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
+	out := new(MovieListResponse)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieUpdate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageClient) MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieDelete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *storageClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error) {
+	out := new(MovieGetOneResponse)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieGetOne", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// StorageServer is the server API for Storage tgservice.
+// All implementations must embed UnimplementedStorageServer
+// for forward compatibility
+type StorageServer interface {
+	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
+	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
+	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
+	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
+	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
+	mustEmbedUnimplementedStorageServer()
+}
+
+// UnimplementedStorageServer must be embedded to have forward compatible implementations.
+type UnimplementedStorageServer struct {
+}
+
+func (UnimplementedStorageServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
+}
+func (UnimplementedStorageServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
+}
+func (UnimplementedStorageServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
+}
+func (UnimplementedStorageServer) MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
+}
+func (UnimplementedStorageServer) MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
+}
+func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
+
+// UnsafeStorageServer may be embedded to opt out of forward compatibility for this tgservice.
+// Use of this interface is not recommended, as added methods to StorageServer will
+// result in compilation errors.
+type UnsafeStorageServer interface {
+	mustEmbedUnimplementedStorageServer()
+}
+
+func RegisterStorageServer(s grpc.ServiceRegistrar, srv StorageServer) {
+	s.RegisterService(&Storage_ServiceDesc, srv)
+}
+
+func _Storage_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).MovieCreate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Storage/MovieCreate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).MovieCreate(ctx, req.(*MovieCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Storage_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).MovieList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Storage/MovieList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).MovieList(ctx, req.(*MovieListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Storage_MovieUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).MovieUpdate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Storage/MovieUpdate",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).MovieUpdate(ctx, req.(*MovieUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Storage_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).MovieDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Storage/MovieDelete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).MovieDelete(ctx, req.(*MovieDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Storage_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MovieGetOneRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StorageServer).MovieGetOne(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.Storage/MovieGetOne",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StorageServer).MovieGetOne(ctx, req.(*MovieGetOneRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Storage_ServiceDesc is the grpc.ServiceDesc for Storage tgservice.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Storage_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "ozon.dev.homework.api.Storage",
+	HandlerType: (*StorageServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "MovieCreate",
+			Handler:    _Storage_MovieCreate_Handler,
+		},
+		{
+			MethodName: "MovieList",
+			Handler:    _Storage_MovieList_Handler,
+		},
+		{
+			MethodName: "MovieUpdate",
+			Handler:    _Storage_MovieUpdate_Handler,
+		},
+		{
+			MethodName: "MovieDelete",
+			Handler:    _Storage_MovieDelete_Handler,
+		},
+		{
+			MethodName: "MovieGetOne",
+			Handler:    _Storage_MovieGetOne_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

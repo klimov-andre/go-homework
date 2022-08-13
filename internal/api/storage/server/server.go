@@ -1,4 +1,4 @@
-package api
+package server
 
 import (
 	"homework/internal/storage/facade"
@@ -6,12 +6,12 @@ import (
 )
 
 type implementation struct {
-	pb.UnimplementedAdminServer
+	pb.UnimplementedStorageServer
 
 	storage facade.StorageFacade
 }
 
-func New(storage facade.StorageFacade) pb.AdminServer {
+func New(storage facade.StorageFacade) pb.StorageServer {
 	return &implementation{
 		storage: storage,
 	}

@@ -1,4 +1,4 @@
-package service
+package tgservice
 
 func (s *Service) Update(args string) (string, error) {
 	m, err := s.robot.Update(args)

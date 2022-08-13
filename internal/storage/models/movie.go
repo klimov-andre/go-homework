@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	pb "homework/pkg/api"
 )
 
 type Movie struct {
@@ -44,4 +45,12 @@ func (m *Movie) SetYear(year int) error {
 
 func (m Movie) String() string {
 	return fmt.Sprintf("%d: %s / %d", m.Id, m.Title, m.Year)
+}
+
+func MovieFromPb(movie *pb.Movie) *Movie{
+	return &Movie{
+		Id: movie.GetId(),
+		Year: int(movie.GetYear()),
+		Title: movie.GetTitle(),
+	}
 }
