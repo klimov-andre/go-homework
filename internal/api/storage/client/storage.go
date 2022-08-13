@@ -28,11 +28,10 @@ func New() (facade.StorageFacade, error) {
 }
 
 func (s *grpcStorage) List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error) {
-	request := &pb.MovieListRequest{
+	request := &pb.StorageMovieListRequest{
 		Limit:  int64(limit),
 		Offset: int64(offset),
-		Order: pb.ListOrder_LIST_ORDER_UNSPECIFIED, // TODO
-		// TODO: Order:  ,
+		Order: order,
 	}
 	response, err := s.storage.MovieList(ctx, request)
 	if err != nil {

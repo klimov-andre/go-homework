@@ -169,7 +169,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiMovieListRequest"
+              "$ref": "#/definitions/apiGatewayMovieListRequest"
             }
           }
         ],
@@ -180,6 +180,23 @@
     }
   },
   "definitions": {
+    "apiGatewayMovieListRequest": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "string",
+          "format": "int64"
+        },
+        "offset": {
+          "type": "string",
+          "format": "int64"
+        },
+        "order": {
+          "$ref": "#/definitions/apiListOrder"
+        }
+      },
+      "title": "MovieList endpoint messages"
+    },
     "apiListOrder": {
       "type": "string",
       "enum": [
@@ -225,23 +242,6 @@
           "$ref": "#/definitions/apiMovie"
         }
       }
-    },
-    "apiMovieListRequest": {
-      "type": "object",
-      "properties": {
-        "limit": {
-          "type": "string",
-          "format": "int64"
-        },
-        "offset": {
-          "type": "string",
-          "format": "int64"
-        },
-        "order": {
-          "$ref": "#/definitions/apiListOrder"
-        }
-      },
-      "title": "MovieList endpoint messages"
     },
     "apiMovieListResponse": {
       "type": "object",

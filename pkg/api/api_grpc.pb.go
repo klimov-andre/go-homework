@@ -19,12 +19,12 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// GatewayClient is the client API for Gateway tgservice.
+// GatewayClient is the client API for Gateway service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayClient interface {
 	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
+	MovieList(ctx context.Context, in *GatewayMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
@@ -47,7 +47,7 @@ func (c *gatewayClient) MovieCreate(ctx context.Context, in *MovieCreateRequest,
 	return out, nil
 }
 
-func (c *gatewayClient) MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
+func (c *gatewayClient) MovieList(ctx context.Context, in *GatewayMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
 	out := new(MovieListResponse)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Gateway/MovieList", in, out, opts...)
 	if err != nil {
@@ -83,12 +83,12 @@ func (c *gatewayClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest,
 	return out, nil
 }
 
-// GatewayServer is the server API for Gateway tgservice.
+// GatewayServer is the server API for Gateway service.
 // All implementations must embed UnimplementedGatewayServer
 // for forward compatibility
 type GatewayServer interface {
 	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
-	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
+	MovieList(context.Context, *GatewayMovieListRequest) (*MovieListResponse, error)
 	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
@@ -102,7 +102,7 @@ type UnimplementedGatewayServer struct {
 func (UnimplementedGatewayServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
-func (UnimplementedGatewayServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
+func (UnimplementedGatewayServer) MovieList(context.Context, *GatewayMovieListRequest) (*MovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
 func (UnimplementedGatewayServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
@@ -116,7 +116,7 @@ func (UnimplementedGatewayServer) MovieGetOne(context.Context, *MovieGetOneReque
 }
 func (UnimplementedGatewayServer) mustEmbedUnimplementedGatewayServer() {}
 
-// UnsafeGatewayServer may be embedded to opt out of forward compatibility for this tgservice.
+// UnsafeGatewayServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to GatewayServer will
 // result in compilation errors.
 type UnsafeGatewayServer interface {
@@ -146,7 +146,7 @@ func _Gateway_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Gateway_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MovieListRequest)
+	in := new(GatewayMovieListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -158,7 +158,7 @@ func _Gateway_MovieList_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/ozon.dev.homework.api.Gateway/MovieList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GatewayServer).MovieList(ctx, req.(*MovieListRequest))
+		return srv.(GatewayServer).MovieList(ctx, req.(*GatewayMovieListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -217,7 +217,7 @@ func _Gateway_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-// Gateway_ServiceDesc is the grpc.ServiceDesc for Gateway tgservice.
+// Gateway_ServiceDesc is the grpc.ServiceDesc for Gateway service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Gateway_ServiceDesc = grpc.ServiceDesc{
@@ -249,12 +249,12 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 	Metadata: "api.proto",
 }
 
-// StorageClient is the client API for Storage tgservice.
+// StorageClient is the client API for Storage service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageClient interface {
 	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
+	MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
@@ -277,7 +277,7 @@ func (c *storageClient) MovieCreate(ctx context.Context, in *MovieCreateRequest,
 	return out, nil
 }
 
-func (c *storageClient) MovieList(ctx context.Context, in *MovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
+func (c *storageClient) MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
 	out := new(MovieListResponse)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieList", in, out, opts...)
 	if err != nil {
@@ -313,12 +313,12 @@ func (c *storageClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest,
 	return out, nil
 }
 
-// StorageServer is the server API for Storage tgservice.
+// StorageServer is the server API for Storage service.
 // All implementations must embed UnimplementedStorageServer
 // for forward compatibility
 type StorageServer interface {
 	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
-	MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error)
+	MovieList(context.Context, *StorageMovieListRequest) (*MovieListResponse, error)
 	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
@@ -332,7 +332,7 @@ type UnimplementedStorageServer struct {
 func (UnimplementedStorageServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
-func (UnimplementedStorageServer) MovieList(context.Context, *MovieListRequest) (*MovieListResponse, error) {
+func (UnimplementedStorageServer) MovieList(context.Context, *StorageMovieListRequest) (*MovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
 func (UnimplementedStorageServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
@@ -346,7 +346,7 @@ func (UnimplementedStorageServer) MovieGetOne(context.Context, *MovieGetOneReque
 }
 func (UnimplementedStorageServer) mustEmbedUnimplementedStorageServer() {}
 
-// UnsafeStorageServer may be embedded to opt out of forward compatibility for this tgservice.
+// UnsafeStorageServer may be embedded to opt out of forward compatibility for this service.
 // Use of this interface is not recommended, as added methods to StorageServer will
 // result in compilation errors.
 type UnsafeStorageServer interface {
@@ -376,7 +376,7 @@ func _Storage_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Storage_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MovieListRequest)
+	in := new(StorageMovieListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -388,7 +388,7 @@ func _Storage_MovieList_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/ozon.dev.homework.api.Storage/MovieList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).MovieList(ctx, req.(*MovieListRequest))
+		return srv.(StorageServer).MovieList(ctx, req.(*StorageMovieListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -447,7 +447,7 @@ func _Storage_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-// Storage_ServiceDesc is the grpc.ServiceDesc for Storage tgservice.
+// Storage_ServiceDesc is the grpc.ServiceDesc for Storage service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Storage_ServiceDesc = grpc.ServiceDesc{

@@ -2,26 +2,29 @@ package server
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"homework/internal/storage/connections"
 	pb "homework/pkg/api"
 )
 
-func (i *gatewayServer) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
+func (i *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.MovieListResponse, error) {
+	limit, offset := int(req.GetLimit()), int(req.GetOffset())
+	if limit <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "limit must be > 0")
+	}
+	if offset < 0 {
+		return nil, status.Error(codes.InvalidArgument, "limit must be >= 0")
+	}
+
 	order := "ASC"
 	switch req.GetOrder() {
 	case pb.ListOrder_LIST_ORDER_DESC:
 		order = "DESC"
 	}
 
-	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), order)
+	list, err := i.storage.List(ctx, limit, offset, order)
 	if err != nil {
-		if errors.Is(err, connections.ErrTimeout) {
-			return nil, status.Error(codes.DeadlineExceeded, err.Error())
-		}
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, err
 	}
 	result := make([]*pb.Movie, 0, len(list))
 	for _, m := range list {

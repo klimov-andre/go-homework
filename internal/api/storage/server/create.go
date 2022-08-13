@@ -13,9 +13,9 @@ import (
 )
 
 func (i *storageServer) MovieCreate(ctx context.Context, req *pb.MovieCreateRequest) (*emptypb.Empty, error) {
-	m, err := models.NewMovie(req.GetTitle(), int(req.GetYear()))
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	m := &models.Movie{
+		Title: req.GetTitle(),
+		Year: int(req.GetYear()),
 	}
 
 	if err := i.storage.Add(ctx, m); err != nil {

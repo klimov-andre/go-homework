@@ -34,7 +34,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Defines the HTTP configuration for an API tgservice. It contains a list of
+// Defines the HTTP configuration for an API service. It contains a list of
 // [HttpRule][google.api.HttpRule], each specifying the mapping of an RPC method
 // to one or more HTTP REST API methods.
 type Http struct {
@@ -44,7 +44,7 @@ type Http struct {
 
 	// A list of HTTP configuration rules that apply to individual API methods.
 	//
-	// **NOTE:** All tgservice configuration rules follow "last one wins" order.
+	// **NOTE:** All service configuration rules follow "last one wins" order.
 	Rules []*HttpRule `protobuf:"bytes,1,rep,name=rules,proto3" json:"rules,omitempty"`
 	// When set to true, URL path parameters will be fully URI-decoded except in
 	// cases of single segment matches in reserved expansion, where "%2F" will be
@@ -104,7 +104,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // # gRPC Transcoding
 //
 // gRPC Transcoding is a feature for mapping between a gRPC method and one or
-// more HTTP REST endpoints. It allows developers to build a single API tgservice
+// more HTTP REST endpoints. It allows developers to build a single API service
 // that supports both gRPC APIs and REST APIs. Many systems, including [Google
 // APIs](https://github.com/googleapis/googleapis),
 // [Cloud Endpoints](https://cloud.google.com/endpoints), [gRPC
@@ -126,7 +126,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // Example:
 //
-//     tgservice Messaging {
+//     service Messaging {
 //       rpc GetMessage(GetMessageRequest) returns (Message) {
 //         option (google.api.http) = {
 //             get: "/v1/{name=messages/*}"
@@ -150,7 +150,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // automatically become HTTP query parameters if there is no HTTP request body.
 // For example:
 //
-//     tgservice Messaging {
+//     service Messaging {
 //       rpc GetMessage(GetMessageRequest) returns (Message) {
 //         option (google.api.http) = {
 //             get:"/v1/messages/{message_id}"
@@ -185,7 +185,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // specifies the mapping. Consider a REST update method on the
 // message resource collection:
 //
-//     tgservice Messaging {
+//     service Messaging {
 //       rpc UpdateMessage(UpdateMessageRequest) returns (Message) {
 //         option (google.api.http) = {
 //           patch: "/v1/messages/{message_id}"
@@ -212,7 +212,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // request body.  This enables the following alternative definition of
 // the update method:
 //
-//     tgservice Messaging {
+//     service Messaging {
 //       rpc UpdateMessage(Message) returns (Message) {
 //         option (google.api.http) = {
 //           patch: "/v1/messages/{message_id}"
@@ -242,7 +242,7 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // It is possible to define multiple HTTP methods for one RPC by using
 // the `additional_bindings` option. Example:
 //
-//     tgservice Messaging {
+//     service Messaging {
 //       rpc GetMessage(GetMessageRequest) returns (Message) {
 //         option (google.api.http) = {
 //           get: "/v1/messages/{message_id}"
@@ -322,17 +322,17 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // ## Using gRPC API Service Configuration
 //
-// gRPC API Service Configuration (tgservice config) is a configuration language
-// for configuring a gRPC tgservice to become a user-facing product. The
-// tgservice config is simply the YAML representation of the `google.api.Service`
+// gRPC API Service Configuration (service config) is a configuration language
+// for configuring a gRPC service to become a user-facing product. The
+// service config is simply the YAML representation of the `google.api.Service`
 // proto message.
 //
 // As an alternative to annotating your proto file, you can configure gRPC
-// transcoding in your tgservice config YAML files. You do this by specifying a
+// transcoding in your service config YAML files. You do this by specifying a
 // `HttpRule` that maps the gRPC method to a REST endpoint, achieving the same
 // effect as the proto annotation. This can be particularly useful if you
 // have a proto that is reused in multiple services. Note that any transcoding
-// specified in the tgservice config will override any matching transcoding
+// specified in the service config will override any matching transcoding
 // configuration in the proto.
 //
 // Example:

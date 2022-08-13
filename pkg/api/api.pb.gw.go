@@ -66,7 +66,7 @@ func local_request_Gateway_MovieCreate_0(ctx context.Context, marshaler runtime.
 }
 
 func request_Gateway_MovieList_0(ctx context.Context, marshaler runtime.Marshaler, client GatewayClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq MovieListRequest
+	var protoReq GatewayMovieListRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -83,7 +83,7 @@ func request_Gateway_MovieList_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Gateway_MovieList_0(ctx context.Context, marshaler runtime.Marshaler, server GatewayServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq MovieListRequest
+	var protoReq GatewayMovieListRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -272,7 +272,7 @@ func local_request_Storage_MovieCreate_0(ctx context.Context, marshaler runtime.
 }
 
 func request_Storage_MovieList_0(ctx context.Context, marshaler runtime.Marshaler, client StorageClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq MovieListRequest
+	var protoReq StorageMovieListRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -289,7 +289,7 @@ func request_Storage_MovieList_0(ctx context.Context, marshaler runtime.Marshale
 }
 
 func local_request_Storage_MovieList_0(ctx context.Context, marshaler runtime.Marshaler, server StorageServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq MovieListRequest
+	var protoReq StorageMovieListRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -407,7 +407,7 @@ func local_request_Storage_MovieGetOne_0(ctx context.Context, marshaler runtime.
 
 }
 
-// RegisterGatewayHandlerServer registers the http handlers for tgservice Gateway to "mux".
+// RegisterGatewayHandlerServer registers the http handlers for service Gateway to "mux".
 // UnaryRPC     :call GatewayServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterGatewayHandlerFromEndpoint instead.
@@ -536,7 +536,7 @@ func RegisterGatewayHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 	return nil
 }
 
-// RegisterStorageHandlerServer registers the http handlers for tgservice Storage to "mux".
+// RegisterStorageHandlerServer registers the http handlers for service Storage to "mux".
 // UnaryRPC     :call StorageServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterStorageHandlerFromEndpoint instead.
@@ -690,13 +690,13 @@ func RegisterGatewayHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 	return RegisterGatewayHandler(ctx, mux, conn)
 }
 
-// RegisterGatewayHandler registers the http handlers for tgservice Gateway to "mux".
+// RegisterGatewayHandler registers the http handlers for service Gateway to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterGatewayHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
 	return RegisterGatewayHandlerClient(ctx, mux, NewGatewayClient(conn))
 }
 
-// RegisterGatewayHandlerClient registers the http handlers for tgservice Gateway
+// RegisterGatewayHandlerClient registers the http handlers for service Gateway
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "GatewayClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "GatewayClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in
@@ -860,13 +860,13 @@ func RegisterStorageHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeM
 	return RegisterStorageHandler(ctx, mux, conn)
 }
 
-// RegisterStorageHandler registers the http handlers for tgservice Storage to "mux".
+// RegisterStorageHandler registers the http handlers for service Storage to "mux".
 // The handlers forward requests to the grpc endpoint over "conn".
 func RegisterStorageHandler(ctx context.Context, mux *runtime.ServeMux, conn *grpc.ClientConn) error {
 	return RegisterStorageHandlerClient(ctx, mux, NewStorageClient(conn))
 }
 
-// RegisterStorageHandlerClient registers the http handlers for tgservice Storage
+// RegisterStorageHandlerClient registers the http handlers for service Storage
 // to "mux". The handlers forward requests to the grpc endpoint over the given implementation of "StorageClient".
 // Note: the gRPC framework executes interceptors within the gRPC handler. If the passed in "StorageClient"
 // doesn't go through the normal gRPC flow (creating a gRPC client etc.) then it will be up to the passed in

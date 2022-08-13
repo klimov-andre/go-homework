@@ -14,10 +14,9 @@ import (
 
 func (i *storageServer) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
-
-	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
+	upd := &models.Movie{
+		Title: m.Title,
+		Year: int(m.Year),
 	}
 
 	if err := i.storage.Update(ctx, m.GetId(), upd); err != nil {

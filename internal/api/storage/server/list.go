@@ -9,14 +9,8 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *storageServer) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
-	order := "ASC"
-	switch req.GetOrder() {
-	case pb.ListOrder_LIST_ORDER_DESC:
-		order = "DESC"
-	}
-
-	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), order)
+func (i *storageServer) MovieList(ctx context.Context, req *pb.StorageMovieListRequest) (*pb.MovieListResponse, error) {
+	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), req.GetOrder())
 	if err != nil {
 		if errors.Is(err, connections.ErrTimeout) {
 			return nil, status.Error(codes.DeadlineExceeded, err.Error())

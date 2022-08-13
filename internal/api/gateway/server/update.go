@@ -2,31 +2,27 @@ package server
 
 import (
 	"context"
-	"errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"homework/internal/storage"
-	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	pb "homework/pkg/api"
 )
 
 func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
+	if m.GetId() <= 0 {
+		return nil, status.Error(codes.InvalidArgument, "movie.id must be > 0")
+	}
 
+	// NewMovie check input params
 	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err := i.storage.Update(ctx, m.GetId(), upd); err != nil {
-		if errors.Is(err, storage.ErrMovieNotExists) {
-			return nil, status.Error(codes.NotFound, err.Error())
-		} else if errors.Is(err, connections.ErrTimeout) {
-			return nil, status.Error(codes.DeadlineExceeded, err.Error())
-		}
-		return nil, status.Error(codes.Internal, err.Error())
+	if err = i.storage.Update(ctx, m.GetId(), upd); err != nil {
+		return nil, err
 	}
 
 	return &emptypb.Empty{}, nil
