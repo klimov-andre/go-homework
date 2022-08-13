@@ -10,7 +10,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieDelete(ctx context.Context, req *pb.MovieDeleteRequest) (*emptypb.Empty, error) {
+func (i *gatewayServer) MovieDelete(ctx context.Context, req *pb.MovieDeleteRequest) (*emptypb.Empty, error) {
 	if err := i.storage.Delete(ctx, req.GetId()); err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	} else if errors.Is(err, connections.ErrTimeout) {

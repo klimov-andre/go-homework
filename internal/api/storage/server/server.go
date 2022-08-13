@@ -5,14 +5,14 @@ import (
 	pb "homework/pkg/api"
 )
 
-type implementation struct {
+type storageServer struct {
 	pb.UnimplementedStorageServer
 
 	storage facade.StorageFacade
 }
 
 func New(storage facade.StorageFacade) pb.StorageServer {
-	return &implementation{
+	return &storageServer{
 		storage: storage,
 	}
 }

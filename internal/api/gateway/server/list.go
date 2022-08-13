@@ -9,7 +9,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
+func (i *gatewayServer) MovieList(ctx context.Context, req *pb.MovieListRequest) (*pb.MovieListResponse, error) {
 	order := "ASC"
 	switch req.GetOrder() {
 	case pb.ListOrder_LIST_ORDER_DESC:

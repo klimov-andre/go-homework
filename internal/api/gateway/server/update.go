@@ -12,7 +12,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
+func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
 
 	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))

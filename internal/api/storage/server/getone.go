@@ -10,7 +10,7 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *implementation) MovieGetOne(ctx context.Context, req *pb.MovieGetOneRequest) (*pb.MovieGetOneResponse, error) {
+func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.MovieGetOneRequest) (*pb.MovieGetOneResponse, error) {
 	m, err := i.storage.GetOneMovie(ctx, req.GetId())
 	if err != nil {
 		if errors.Is(err, storagePkg.ErrMovieNotExists) {
