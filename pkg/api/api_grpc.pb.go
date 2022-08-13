@@ -254,7 +254,7 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageClient interface {
 	MovieCreate(ctx context.Context, in *MovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
+	MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (Storage_MovieListClient, error)
 	MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *MovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieGetOne(ctx context.Context, in *MovieGetOneRequest, opts ...grpc.CallOption) (*MovieGetOneResponse, error)
@@ -277,13 +277,36 @@ func (c *storageClient) MovieCreate(ctx context.Context, in *MovieCreateRequest,
 	return out, nil
 }
 
-func (c *storageClient) MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
-	out := new(MovieListResponse)
-	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.Storage/MovieList", in, out, opts...)
+func (c *storageClient) MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (Storage_MovieListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Storage_ServiceDesc.Streams[0], "/ozon.dev.homework.api.Storage/MovieList", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &storageMovieListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Storage_MovieListClient interface {
+	Recv() (*MovieListResponse, error)
+	grpc.ClientStream
+}
+
+type storageMovieListClient struct {
+	grpc.ClientStream
+}
+
+func (x *storageMovieListClient) Recv() (*MovieListResponse, error) {
+	m := new(MovieListResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *storageClient) MovieUpdate(ctx context.Context, in *MovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
@@ -318,7 +341,7 @@ func (c *storageClient) MovieGetOne(ctx context.Context, in *MovieGetOneRequest,
 // for forward compatibility
 type StorageServer interface {
 	MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error)
-	MovieList(context.Context, *StorageMovieListRequest) (*MovieListResponse, error)
+	MovieList(*StorageMovieListRequest, Storage_MovieListServer) error
 	MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *MovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *MovieGetOneRequest) (*MovieGetOneResponse, error)
@@ -332,8 +355,8 @@ type UnimplementedStorageServer struct {
 func (UnimplementedStorageServer) MovieCreate(context.Context, *MovieCreateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
-func (UnimplementedStorageServer) MovieList(context.Context, *StorageMovieListRequest) (*MovieListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
+func (UnimplementedStorageServer) MovieList(*StorageMovieListRequest, Storage_MovieListServer) error {
+	return status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
 func (UnimplementedStorageServer) MovieUpdate(context.Context, *MovieUpdateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
@@ -375,22 +398,25 @@ func _Storage_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Storage_MovieList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StorageMovieListRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _Storage_MovieList_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StorageMovieListRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(StorageServer).MovieList(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ozon.dev.homework.api.Storage/MovieList",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(StorageServer).MovieList(ctx, req.(*StorageMovieListRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(StorageServer).MovieList(m, &storageMovieListServer{stream})
+}
+
+type Storage_MovieListServer interface {
+	Send(*MovieListResponse) error
+	grpc.ServerStream
+}
+
+type storageMovieListServer struct {
+	grpc.ServerStream
+}
+
+func (x *storageMovieListServer) Send(m *MovieListResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _Storage_MovieUpdate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -459,10 +485,6 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Storage_MovieCreate_Handler,
 		},
 		{
-			MethodName: "MovieList",
-			Handler:    _Storage_MovieList_Handler,
-		},
-		{
 			MethodName: "MovieUpdate",
 			Handler:    _Storage_MovieUpdate_Handler,
 		},
@@ -475,6 +497,12 @@ var Storage_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Storage_MovieGetOne_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "MovieList",
+			Handler:       _Storage_MovieList_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "api.proto",
 }

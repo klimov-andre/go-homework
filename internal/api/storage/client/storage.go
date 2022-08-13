@@ -8,6 +8,7 @@ import (
 	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
 	pb "homework/pkg/api"
+	"io"
 )
 
 var _ facade.StorageFacade = (*grpcStorage)(nil)
@@ -33,17 +34,22 @@ func (s *grpcStorage) List(ctx context.Context, limit, offset int, order string)
 		Offset: int64(offset),
 		Order: order,
 	}
-	response, err := s.storage.MovieList(ctx, request)
+	stream, err := s.storage.MovieList(ctx, request)
 	if err != nil {
 		return nil, err
 	}
 
-	movies := make([]*models.Movie, len(response.Movie))
-	for i, m := range response.Movie {
-		movies[i] = models.MovieFromPb(m)
-	}
+	var movies []*models.Movie
+	for {
+		response, err := stream.Recv()
+		if err == io.EOF {
+			return movies, nil
+		}
 
-	return movies, nil
+		for _, m := range response.Movie {
+			movies = append(movies, models.MovieFromPb(m))
+		}
+	}
 }
 
 func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) error {

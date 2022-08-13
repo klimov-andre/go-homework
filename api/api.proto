@@ -38,7 +38,7 @@ service Gateway {
 
 service Storage {
   rpc MovieCreate(MovieCreateRequest) returns (google.protobuf.Empty){}
-  rpc MovieList(StorageMovieListRequest) returns (MovieListResponse){}
+  rpc MovieList(StorageMovieListRequest) returns (stream MovieListResponse){}
   rpc MovieUpdate(MovieUpdateRequest) returns (google.protobuf.Empty){}
   rpc MovieDelete(MovieDeleteRequest) returns (google.protobuf.Empty){}
   rpc MovieGetOne(MovieGetOneRequest) returns (MovieGetOneResponse){}
@@ -65,8 +65,7 @@ message MovieCreateRequest {
 // MovieList endpoint messages
 message GatewayMovieListRequest{
   int64 limit = 1;
-  int64 offset = 2;
-  ListOrder order = 3;
+  ListOrder order = 2;
 }
 message StorageMovieListRequest{
   int64 limit = 1;

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"context"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -9,24 +8,33 @@ import (
 	pb "homework/pkg/api"
 )
 
-func (i *storageServer) MovieList(ctx context.Context, req *pb.StorageMovieListRequest) (*pb.MovieListResponse, error) {
-	list, err := i.storage.List(ctx, int(req.GetLimit()), int(req.GetOffset()), req.GetOrder())
-	if err != nil {
-		if errors.Is(err, connections.ErrTimeout) {
-			return nil, status.Error(codes.DeadlineExceeded, err.Error())
+func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storage_MovieListServer) error {
+	limit, order := int(req.GetLimit()), req.GetOrder()
+	for offset := int(req.GetOffset());; offset += limit {
+		list, err := i.storage.List(srv.Context(), limit, offset, order)
+		if err != nil {
+			if errors.Is(err, connections.ErrTimeout) {
+				return status.Error(codes.DeadlineExceeded, err.Error())
+			}
+			return status.Error(codes.Internal, err.Error())
 		}
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-	result := make([]*pb.Movie, 0, len(list))
-	for _, m := range list {
-		result = append(result, &pb.Movie{
-			Id:    m.Id,
-			Title: m.Title,
-			Year:  int32(m.Year),
+
+		// exit when no other movies in DB
+		if len(list) == 0 {
+			return nil
+		}
+
+		result := make([]*pb.Movie, 0, len(list))
+		for _, m := range list {
+			result = append(result, &pb.Movie{
+				Id:    m.Id,
+				Title: m.Title,
+				Year:  int32(m.Year),
+			})
+		}
+
+		srv.Send(&pb.MovieListResponse{
+			Movie: result,
 		})
 	}
-
-	return &pb.MovieListResponse{
-		Movie: result,
-	}, nil
 }
