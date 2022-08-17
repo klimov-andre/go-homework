@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/include"
 )
 
 type Movie struct {

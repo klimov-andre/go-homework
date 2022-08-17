@@ -1,0 +1,48 @@
+syntax = "proto3";
+package ozon.dev.homework.api.storage;
+option go_package = "homework/pkg/api/storage;storage";
+
+import "google/protobuf/empty.proto";
+import "include/movie.proto";
+
+service Storage {
+  rpc MovieCreate(StorageMovieCreateRequest) returns (google.protobuf.Empty){}
+  rpc MovieList(StorageMovieListRequest) returns (stream StorageMovieListResponse){}
+  rpc MovieUpdate(StorageMovieUpdateRequest) returns (google.protobuf.Empty){}
+  rpc MovieDelete(StorageMovieDeleteRequest) returns (google.protobuf.Empty){}
+  rpc MovieGetOne(StorageMovieGetOneRequest) returns (StorageMovieGetOneResponse){}
+}
+
+// StorageMovieCreate endpoint messages
+message StorageMovieCreateRequest {
+  string title = 1;
+  int32 year = 2;
+}
+
+// MovieList endpoint messages
+message StorageMovieListRequest{
+  int64 limit = 1;
+  int64 offset = 2;
+  string order = 3;
+}
+message StorageMovieListResponse {
+  repeated Movie movie = 1;
+}
+
+// MovieUpdate endpoint messages
+message StorageMovieUpdateRequest{
+  Movie movie = 1;
+}
+
+// MovieDelete endpoint messages
+message StorageMovieDeleteRequest{
+  uint64 id = 1;
+}
+
+// MovieGetOne endpoint messages
+message StorageMovieGetOneRequest {
+  uint64 id = 1;
+}
+message StorageMovieGetOneResponse {
+  Movie movie = 1;
+}

@@ -6,11 +6,12 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"homework/internal/storage/models"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/gateway"
+	api "homework/pkg/api/include"
 )
 
-func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
-	m := req.GetMovie()
+func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+	var m *api.Movie = req.GetMovie()
 	if m.GetId() <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "movie.id must be > 0")
 	}

@@ -5,7 +5,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"homework/internal/storage/connections"
-	pb "homework/pkg/api"
+	api "homework/pkg/api/include"
+	pb "homework/pkg/api/storage"
 )
 
 func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storage_MovieListServer) error {
@@ -24,16 +25,16 @@ func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storag
 			return nil
 		}
 
-		result := make([]*pb.Movie, 0, len(list))
+		result := make([]*api.Movie, 0, len(list))
 		for _, m := range list {
-			result = append(result, &pb.Movie{
+			result = append(result, &api.Movie{
 				Id:    m.Id,
 				Title: m.Title,
 				Year:  int32(m.Year),
 			})
 		}
 
-		srv.Send(&pb.MovieListResponse{
+		srv.Send(&pb.StorageMovieListResponse{
 			Movie: result,
 		})
 	}

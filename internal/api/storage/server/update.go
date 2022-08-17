@@ -9,11 +9,12 @@ import (
 	"homework/internal/storage"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
-	pb "homework/pkg/api"
+	api "homework/pkg/api/include"
+	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieUpdate(ctx context.Context, req *pb.MovieUpdateRequest) (*emptypb.Empty, error) {
-	m := req.GetMovie()
+func (i *storageServer) MovieUpdate(ctx context.Context, req *pb.StorageMovieUpdateRequest) (*emptypb.Empty, error) {
+	var m *api.Movie = req.GetMovie()
 	upd := &models.Movie{
 		Title: m.Title,
 		Year: int(m.Year),

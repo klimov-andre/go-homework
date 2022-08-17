@@ -7,7 +7,8 @@ import (
 	storageCfg "homework/config/storage"
 	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
-	pb "homework/pkg/api"
+	api "homework/pkg/api/include"
+	pb "homework/pkg/api/storage"
 	"io"
 )
 
@@ -53,7 +54,7 @@ func (s *grpcStorage) List(ctx context.Context, limit, offset int, order string)
 }
 
 func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) error {
-	request := &pb.MovieCreateRequest{
+	request := &pb.StorageMovieCreateRequest{
 		Title: m.Title,
 		Year: int32(m.Year),
 	}
@@ -63,8 +64,8 @@ func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) error {
 }
 
 func (s *grpcStorage) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {
-	request := &pb.MovieUpdateRequest{
-		Movie: &pb.Movie{
+	request := &pb.StorageMovieUpdateRequest{
+		Movie: &api.Movie{
 			Id:    id,
 			Title: newMovie.Title,
 			Year: int32(newMovie.Year),
@@ -76,7 +77,7 @@ func (s *grpcStorage) Update(ctx context.Context, id uint64, newMovie *models.Mo
 }
 
 func (s *grpcStorage) Delete(ctx context.Context, id uint64) error {
-	request := &pb.MovieDeleteRequest{
+	request := &pb.StorageMovieDeleteRequest{
 		Id: id,
 	}
 	_, err := s.storage.MovieDelete(ctx, request)
@@ -84,7 +85,7 @@ func (s *grpcStorage) Delete(ctx context.Context, id uint64) error {
 }
 
 func (s *grpcStorage) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error) {
-	request := &pb.MovieGetOneRequest{
+	request := &pb.StorageMovieGetOneRequest{
 		Id: id,
 	}
 	response, err := s.storage.MovieGetOne(ctx, request)

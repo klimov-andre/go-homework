@@ -12,7 +12,7 @@ import (
 	"net"
 	"net/http"
 
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/gateway"
 )
 
 func runGRPC(storage facade.StorageFacade) {

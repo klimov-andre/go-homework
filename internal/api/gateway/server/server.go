@@ -2,7 +2,7 @@ package server
 
 import (
 	"homework/internal/storage/facade"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/gateway"
 )
 
 type gatewayServer struct {

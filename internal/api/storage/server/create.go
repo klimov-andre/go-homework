@@ -9,10 +9,10 @@ import (
 	"homework/internal/storage"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieCreate(ctx context.Context, req *pb.MovieCreateRequest) (*emptypb.Empty, error) {
+func (i *storageServer) MovieCreate(ctx context.Context, req *pb.StorageMovieCreateRequest) (*emptypb.Empty, error) {
 	m := &models.Movie{
 		Title: req.GetTitle(),
 		Year: int(req.GetYear()),

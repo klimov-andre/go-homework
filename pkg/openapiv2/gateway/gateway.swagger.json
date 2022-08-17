@@ -1,15 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "api.proto",
+    "title": "gateway/gateway.proto",
     "version": "version not set"
   },
   "tags": [
     {
       "name": "Gateway"
-    },
-    {
-      "name": "Storage"
     }
   ],
   "consumes": [
@@ -43,7 +40,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiMovieCreateRequest"
+              "$ref": "#/definitions/gatewayGatewayMovieCreateRequest"
             }
           }
         ],
@@ -76,7 +73,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiMovieUpdateRequest"
+              "$ref": "#/definitions/gatewayGatewayMovieUpdateRequest"
             }
           }
         ],
@@ -92,7 +89,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMovieGetOneResponse"
+              "$ref": "#/definitions/gatewayGatewayMovieGetOneResponse"
             }
           },
           "default": {
@@ -153,7 +150,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/apiMovieListResponse"
+              "$ref": "#/definitions/gatewayGatewayMovieListResponse"
             }
           },
           "default": {
@@ -169,7 +166,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/apiGatewayMovieListRequest"
+              "$ref": "#/definitions/gatewayGatewayMovieListRequest"
             }
           }
         ],
@@ -180,28 +177,6 @@
     }
   },
   "definitions": {
-    "apiGatewayMovieListRequest": {
-      "type": "object",
-      "properties": {
-        "limit": {
-          "type": "string",
-          "format": "int64"
-        },
-        "order": {
-          "$ref": "#/definitions/apiListOrder"
-        }
-      },
-      "title": "MovieList endpoint messages"
-    },
-    "apiListOrder": {
-      "type": "string",
-      "enum": [
-        "LIST_ORDER_UNSPECIFIED",
-        "LIST_ORDER_ASC",
-        "LIST_ORDER_DESC"
-      ],
-      "default": "LIST_ORDER_UNSPECIFIED"
-    },
     "apiMovie": {
       "type": "object",
       "properties": {
@@ -218,7 +193,7 @@
         }
       }
     },
-    "apiMovieCreateRequest": {
+    "gatewayGatewayMovieCreateRequest": {
       "type": "object",
       "properties": {
         "title": {
@@ -229,9 +204,9 @@
           "format": "int32"
         }
       },
-      "title": "MovieCreate endpoint messages"
+      "title": "GatewayMovieCreateRequest endpoint messages"
     },
-    "apiMovieGetOneResponse": {
+    "gatewayGatewayMovieGetOneResponse": {
       "type": "object",
       "properties": {
         "movie": {
@@ -239,7 +214,20 @@
         }
       }
     },
-    "apiMovieListResponse": {
+    "gatewayGatewayMovieListRequest": {
+      "type": "object",
+      "properties": {
+        "limit": {
+          "type": "string",
+          "format": "int64"
+        },
+        "order": {
+          "$ref": "#/definitions/gatewayListOrder"
+        }
+      },
+      "title": "MovieList endpoint messages"
+    },
+    "gatewayGatewayMovieListResponse": {
       "type": "object",
       "properties": {
         "movie": {
@@ -250,14 +238,23 @@
         }
       }
     },
-    "apiMovieUpdateRequest": {
+    "gatewayGatewayMovieUpdateRequest": {
       "type": "object",
       "properties": {
         "movie": {
           "$ref": "#/definitions/apiMovie"
         }
       },
-      "title": "MovieUpdate endpoint messages"
+      "title": "GatewayMovieUpdate endpoint messages"
+    },
+    "gatewayListOrder": {
+      "type": "string",
+      "enum": [
+        "LIST_ORDER_UNSPECIFIED",
+        "LIST_ORDER_ASC",
+        "LIST_ORDER_DESC"
+      ],
+      "default": "LIST_ORDER_UNSPECIFIED"
     },
     "protobufAny": {
       "type": "object",

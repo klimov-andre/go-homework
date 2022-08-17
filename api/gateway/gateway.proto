@@ -1,0 +1,77 @@
+syntax = "proto3";
+package ozon.dev.homework.api.gateway;
+option go_package = "homework/pkg/api/gateway;gateway";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "include/movie.proto";
+
+service Gateway {
+  rpc MovieCreate(GatewayMovieCreateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/movie"
+      body: "*"
+    };
+  }
+  rpc MovieList(GatewayMovieListRequest) returns (GatewayMovieListResponse){
+    option (google.api.http) = {
+      post: "/v1/movies/list"
+      body: "*"
+    };
+  }
+  rpc MovieUpdate(GatewayMovieUpdateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/movie/update"
+      body: "*"
+    };
+  }
+  rpc MovieDelete(GatewayMovieDeleteRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v1/movie/{id}"
+    };
+  }
+  rpc MovieGetOne(GatewayMovieGetOneRequest) returns (GatewayMovieGetOneResponse){
+    option (google.api.http) = {
+      get: "/v1/movie/{id}"
+    };
+  }
+}
+
+enum ListOrder {
+  LIST_ORDER_UNSPECIFIED = 0;
+  LIST_ORDER_ASC = 1;
+  LIST_ORDER_DESC = 2;
+}
+
+// GatewayMovieCreateRequest endpoint messages
+message GatewayMovieCreateRequest {
+  string title = 1;
+  int32 year = 2;
+}
+
+// MovieList endpoint messages
+message GatewayMovieListRequest{
+  int64 limit = 1;
+  ListOrder order = 2;
+}
+message GatewayMovieListResponse {
+  repeated Movie movie = 1;
+}
+
+// GatewayMovieUpdate endpoint messages
+message GatewayMovieUpdateRequest{
+  Movie movie = 1;
+}
+
+// GatewayMovieDelete endpoint messages
+message GatewayMovieDeleteRequest{
+  uint64 id = 1;
+}
+
+// GatewayMovieGetOne endpoint messages
+message GatewayMovieGetOneRequest {
+  uint64 id = 1;
+}
+message GatewayMovieGetOneResponse {
+  Movie movie = 1;
+}

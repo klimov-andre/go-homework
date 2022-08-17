@@ -5,7 +5,7 @@ import (
 	storageCfg "homework/config/storage"
 	apiPkg "homework/internal/api/storage/server"
 	"homework/internal/storage/facade"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/storage"
 	"log"
 	"net"
 )

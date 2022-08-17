@@ -1,0 +1,9 @@
+syntax = "proto3";
+option go_package = "homework/pkg/api/include;include";
+package ozon.dev.homework.api;
+
+message Movie {
+  uint64 id = 1;
+  string title = 2;
+  int32 year = 3;
+}

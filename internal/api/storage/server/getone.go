@@ -7,10 +7,11 @@ import (
 	"google.golang.org/grpc/status"
 	storagePkg "homework/internal/storage"
 	"homework/internal/storage/connections"
-	pb "homework/pkg/api"
+	api "homework/pkg/api/include"
+	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.MovieGetOneRequest) (*pb.MovieGetOneResponse, error) {
+func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.StorageMovieGetOneRequest) (*pb.StorageMovieGetOneResponse, error) {
 	m, err := i.storage.GetOneMovie(ctx, req.GetId())
 	if err != nil {
 		if errors.Is(err, storagePkg.ErrMovieNotExists) {
@@ -21,8 +22,8 @@ func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.MovieGetOneRequ
 		return nil, status.Error(codes.DeadlineExceeded, err.Error())
 	}
 
-	return &pb.MovieGetOneResponse{
-		Movie: &pb.Movie{
+	return &pb.StorageMovieGetOneResponse{
+		Movie: &api.Movie{
 			Id:    m.Id,
 			Title: m.Title,
 			Year: int32(m.Year),

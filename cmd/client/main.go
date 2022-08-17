@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/gateway"
 	"log"
 )
 
@@ -24,7 +24,7 @@ func main() {
 	//	wg.Add(1)
 	//	go func(k int) {
 	//		defer wg.Done()
-			list, errG := client.MovieList(ctx, &pb.GatewayMovieListRequest{Limit: 1, Offset: 0, Order: 2})
+			list, errG := client.MovieList(ctx, &pb.GatewayMovieListRequest{Limit: 1, Order: 2})
 			if errG != nil {
 				fmt.Printf("%d %v\n", 1, errG.Error())
 				return
