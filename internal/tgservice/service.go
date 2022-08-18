@@ -4,7 +4,7 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
-	"homework/config"
+	"homework/config/gateway"
 	"homework/internal/robot"
 	"homework/internal/router"
 	"homework/internal/storage/facade"
@@ -27,7 +27,7 @@ type Service struct {
 }
 
 func NewService(storage facade.StorageFacade) (*Service, error) {
-	bot, err := tgbotapi.NewBotAPI(config.ApiKey)
+	bot, err := tgbotapi.NewBotAPI(gateway.ApiKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "init tgbot")
 	}

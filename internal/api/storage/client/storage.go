@@ -13,6 +13,7 @@ import (
 
 var _ facade.StorageFacade = (*grpcStorage)(nil)
 
+// grpcStorage implements StorageFacade and use remote Storage service
 type grpcStorage struct {
 	storage pb.StorageClient
 }

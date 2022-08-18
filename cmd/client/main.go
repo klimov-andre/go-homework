@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"homework/config"
+	"homework/config/gateway"
 	pb "homework/pkg/api/gateway"
 	"log"
 )
 
 func main() {
-	conns, err := grpc.Dial(config.GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conns, err := grpc.Dial(gateway.GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Panic(err)
 	}

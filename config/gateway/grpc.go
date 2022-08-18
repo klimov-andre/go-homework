@@ -1,4 +1,4 @@
-package config
+package gateway
 
 const (
 	GrpcProtocol = "tcp"
