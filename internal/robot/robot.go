@@ -106,5 +106,5 @@ func (r *Robot) Update(args string) (*models.Movie, error) {
 		return nil, err
 	}
 
-	return r.storage.Update(context.Background(), id, m)
+	return m, r.storage.Update(context.Background(), id, m)
 }

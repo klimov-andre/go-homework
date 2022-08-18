@@ -6,9 +6,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config"
-	pb "homework/pkg/api"
+	pb "homework/pkg/api/gateway"
 	"log"
-	"sync"
 )
 
 func main() {
@@ -17,24 +16,24 @@ func main() {
 		log.Panic(err)
 	}
 
-	client := pb.NewAdminClient(conns)
+	client := pb.NewGatewayClient(conns)
 
-	var wg = sync.WaitGroup{}
+	//var wg = sync.WaitGroup{}
 	ctx := context.Background()
-	for i := 0; i < 100; i++ {
-		wg.Add(1)
-		go func(k int) {
-			defer wg.Done()
-			list, errG := client.MovieList(ctx, &pb.MovieListRequest{Limit: 2, Offset: 0})
+	//for i := 0; i < 100; i++ {
+	//	wg.Add(1)
+	//	go func(k int) {
+	//		defer wg.Done()
+			list, errG := client.MovieList(ctx, &pb.GatewayMovieListRequest{Limit: 1, Order: 2})
 			if errG != nil {
-				fmt.Printf("%d %v\n", k, errG.Error())
+				fmt.Printf("%d %v\n", 1, errG.Error())
 				return
 			}
 
-			fmt.Printf("%d %v\n", k, list)
-		}(i)
+		fmt.Printf("%d %v\n",1, list)
+		//}(i)
 
-	}
+	//}
 
-	wg.Wait()
+	//wg.Wait()
 }

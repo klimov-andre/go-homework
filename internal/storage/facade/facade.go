@@ -13,7 +13,7 @@ var _ StorageFacade = (*storageFacade)(nil)
 type StorageFacade interface {
 	List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error)
 	Add(ctx context.Context, m *models.Movie) error
-	Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error)
+	Update(ctx context.Context, id uint64, newMovie *models.Movie) error
 	Delete(ctx context.Context, id uint64) error
 	GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error)
 }
@@ -58,13 +58,13 @@ func (s *storageFacade) Add(ctx context.Context, m *models.Movie) error {
 	return nil
 }
 
-func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) (*models.Movie, error) {
+func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {
 	if err := s.db.Update(ctx, id, newMovie); err != nil {
-		return nil, err
+		return err
 	}
 
 	s.cache.AddOrUpdate(ctx, id, newMovie)
-	return newMovie, nil
+	return nil
 }
 
 func (s *storageFacade) Delete(ctx context.Context, id uint64) error {
