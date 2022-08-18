@@ -4,12 +4,13 @@ import (
 	"context"
 	"github.com/pkg/errors"
 	"homework/internal/storage/cache"
-	"homework/internal/storage/db"
+	dbPkg "homework/internal/storage/db"
 	"homework/internal/storage/models"
 )
 
 var _ StorageFacade = (*storageFacade)(nil)
 
+//go:generate mockery --name=StorageFacade --case=snake --with-expecter --structname=StorageFacade --exported=true
 type StorageFacade interface {
 	List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error)
 	Add(ctx context.Context, m *models.Movie) error
@@ -19,12 +20,12 @@ type StorageFacade interface {
 }
 
 type storageFacade struct {
-	db *db.Database
+	db dbPkg.DatabaseInterface
 	cache *cache.Cache
 }
 
 func NewStorage() (StorageFacade, error) {
-	db, err := db.NewDatabase()
+	db, err := dbPkg.NewDatabase()
 	if err != nil {
 		return nil, errors.Wrap(err, "could not init database")
 	}
