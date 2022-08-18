@@ -5,7 +5,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	pb "homework/pkg/api/gateway"
-	api "homework/pkg/api/include"
 )
 
 func (i *gatewayServer) MovieGetOne(ctx context.Context, req *pb.GatewayMovieGetOneRequest) (*pb.GatewayMovieGetOneResponse, error) {
@@ -20,7 +19,7 @@ func (i *gatewayServer) MovieGetOne(ctx context.Context, req *pb.GatewayMovieGet
 	}
 
 	return &pb.GatewayMovieGetOneResponse{
-		Movie: &api.Movie{
+		Movie: &pb.Movie{
 			Id:    m.Id,
 			Title: m.Title,
 			Year: int32(m.Year),

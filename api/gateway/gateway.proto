@@ -4,7 +4,6 @@ option go_package = "homework/pkg/api/gateway;gateway";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
-import "include/movie.proto";
 
 service Gateway {
   rpc MovieCreate(GatewayMovieCreateRequest) returns (google.protobuf.Empty){
@@ -35,6 +34,12 @@ service Gateway {
       get: "/v1/movie/{id}"
     };
   }
+}
+
+message Movie {
+  uint64 id = 1;
+  string title = 2;
+  int32 year = 3;
 }
 
 enum ListOrder {

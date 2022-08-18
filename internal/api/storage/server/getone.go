@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/status"
 	storagePkg "homework/internal/storage"
 	"homework/internal/storage/connections"
-	api "homework/pkg/api/include"
 	pb "homework/pkg/api/storage"
 )
 
@@ -23,7 +22,7 @@ func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.StorageMovieGet
 	}
 
 	return &pb.StorageMovieGetOneResponse{
-		Movie: &api.Movie{
+		Movie: &pb.Movie{
 			Id:    m.Id,
 			Title: m.Title,
 			Year: int32(m.Year),

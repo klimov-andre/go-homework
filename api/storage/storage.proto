@@ -3,7 +3,6 @@ package ozon.dev.homework.api.storage;
 option go_package = "homework/pkg/api/storage;storage";
 
 import "google/protobuf/empty.proto";
-import "include/movie.proto";
 
 service Storage {
   rpc MovieCreate(StorageMovieCreateRequest) returns (google.protobuf.Empty){}
@@ -11,6 +10,12 @@ service Storage {
   rpc MovieUpdate(StorageMovieUpdateRequest) returns (google.protobuf.Empty){}
   rpc MovieDelete(StorageMovieDeleteRequest) returns (google.protobuf.Empty){}
   rpc MovieGetOne(StorageMovieGetOneRequest) returns (StorageMovieGetOneResponse){}
+}
+
+message Movie {
+  uint64 id = 1;
+  string title = 2;
+  int32 year = 3;
 }
 
 // StorageMovieCreate endpoint messages

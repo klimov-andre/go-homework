@@ -5,7 +5,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"homework/internal/storage/connections"
-	api "homework/pkg/api/include"
 	pb "homework/pkg/api/storage"
 )
 
@@ -25,9 +24,9 @@ func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storag
 			return nil
 		}
 
-		result := make([]*api.Movie, 0, len(list))
+		result := make([]*pb.Movie, 0, len(list))
 		for _, m := range list {
-			result = append(result, &api.Movie{
+			result = append(result, &pb.Movie{
 				Id:    m.Id,
 				Title: m.Title,
 				Year:  int32(m.Year),

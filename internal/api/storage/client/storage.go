@@ -7,7 +7,6 @@ import (
 	storageCfg "homework/config/storage"
 	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
-	api "homework/pkg/api/include"
 	pb "homework/pkg/api/storage"
 	"io"
 )
@@ -65,7 +64,7 @@ func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) error {
 
 func (s *grpcStorage) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {
 	request := &pb.StorageMovieUpdateRequest{
-		Movie: &api.Movie{
+		Movie: &pb.Movie{
 			Id:    id,
 			Title: newMovie.Title,
 			Year: int32(newMovie.Year),

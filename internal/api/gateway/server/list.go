@@ -5,7 +5,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	pb "homework/pkg/api/gateway"
-	api "homework/pkg/api/include"
 )
 
 func (i *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.GatewayMovieListResponse, error) {
@@ -24,9 +23,9 @@ func (i *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListR
 	if err != nil {
 		return nil, err
 	}
-	result := make([]*api.Movie, 0, len(list))
+	result := make([]*pb.Movie, 0, len(list))
 	for _, m := range list {
-		result = append(result, &api.Movie{
+		result = append(result, &pb.Movie{
 			Id:    m.Id,
 			Title: m.Title,
 			Year:  int32(m.Year),

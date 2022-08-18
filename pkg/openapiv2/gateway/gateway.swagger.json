@@ -177,22 +177,6 @@
     }
   },
   "definitions": {
-    "apiMovie": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uint64"
-        },
-        "title": {
-          "type": "string"
-        },
-        "year": {
-          "type": "integer",
-          "format": "int32"
-        }
-      }
-    },
     "gatewayGatewayMovieCreateRequest": {
       "type": "object",
       "properties": {
@@ -210,7 +194,7 @@
       "type": "object",
       "properties": {
         "movie": {
-          "$ref": "#/definitions/apiMovie"
+          "$ref": "#/definitions/gatewayMovie"
         }
       }
     },
@@ -233,7 +217,7 @@
         "movie": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/apiMovie"
+            "$ref": "#/definitions/gatewayMovie"
           }
         }
       }
@@ -242,7 +226,7 @@
       "type": "object",
       "properties": {
         "movie": {
-          "$ref": "#/definitions/apiMovie"
+          "$ref": "#/definitions/gatewayMovie"
         }
       },
       "title": "GatewayMovieUpdate endpoint messages"
@@ -255,6 +239,22 @@
         "LIST_ORDER_DESC"
       ],
       "default": "LIST_ORDER_UNSPECIFIED"
+    },
+    "gatewayMovie": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
     },
     "protobufAny": {
       "type": "object",
