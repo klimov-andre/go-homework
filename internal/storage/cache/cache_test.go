@@ -10,7 +10,10 @@ import (
 )
 
 func TestCache_AddOrUpdate(t *testing.T) {
-	cache := NewCache()
+	cache := &Cache{
+		data:   make(map[uint64]*models.Movie),
+		pool:   connections.NewPool(poolSize, timeoutDuration),
+	}
 
 	args := []struct {
 		id uint64
@@ -62,22 +65,22 @@ func TestCache_AddOrUpdate(t *testing.T) {
 	assert.True(t, reflect.DeepEqual(expectedData, cache.data))
 }
 
-func TestCache_Delete(t *testing.T) {
-	cache := &Cache{
-		data:   map[uint64]*models.Movie {
-			1: {
-				Title: "1",
-				Year:  2001,
-				Id:  1,
-			},
-			2: {
-				Title: "2",
-				Year:  2003,
-				Id:  2,
-			},
-		},
-		pool:   connections.NewPool(poolSize, timeoutDuration),
-	}
-
-	cache.Delete(context.Background(), )
-}
+//func TestCache_Delete(t *testing.T) {
+//	cache := &Cache{
+//		data:   map[uint64]*models.Movie {
+//			1: {
+//				Title: "1",
+//				Year:  2001,
+//				Id:  1,
+//			},
+//			2: {
+//				Title: "2",
+//				Year:  2003,
+//				Id:  2,
+//			},
+//		},
+//		pool:   connections.NewPool(poolSize, timeoutDuration),
+//	}
+//
+//	cache.Delete(context.Background(), )
+//}

@@ -11,6 +11,7 @@ import (
 var _ StorageFacade = (*storageFacade)(nil)
 
 //go:generate mockery --name=StorageFacade --case=snake --with-expecter --structname=StorageFacade --exported=true
+
 type StorageFacade interface {
 	List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error)
 	Add(ctx context.Context, m *models.Movie) error
@@ -21,7 +22,7 @@ type StorageFacade interface {
 
 type storageFacade struct {
 	db dbPkg.DatabaseInterface
-	cache *cache.Cache
+	cache cache.CacheInterface
 }
 
 func NewStorage() (StorageFacade, error) {
