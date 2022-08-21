@@ -47,6 +47,9 @@ func (s *Cache) AddOrUpdate(_ context.Context, id uint64, m *models.Movie) {
 		s.mu.Unlock()
 	}()
 
+	if m.Id == 0 {
+		m.Id = id
+	}
 	s.data[id] = m
 }
 
