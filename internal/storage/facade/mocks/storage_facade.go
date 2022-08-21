@@ -24,17 +24,24 @@ func (_m *StorageFacade) EXPECT() *StorageFacade_Expecter {
 }
 
 // Add provides a mock function with given fields: ctx, m
-func (_m *StorageFacade) Add(ctx context.Context, m *models.Movie) error {
+func (_m *StorageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error) {
 	ret := _m.Called(ctx, m)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *models.Movie) error); ok {
+	var r0 uint64
+	if rf, ok := ret.Get(0).(func(context.Context, *models.Movie) uint64); ok {
 		r0 = rf(ctx, m)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(uint64)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, *models.Movie) error); ok {
+		r1 = rf(ctx, m)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // StorageFacade_Add_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Add'
@@ -56,8 +63,8 @@ func (_c *StorageFacade_Add_Call) Run(run func(ctx context.Context, m *models.Mo
 	return _c
 }
 
-func (_c *StorageFacade_Add_Call) Return(_a0 error) *StorageFacade_Add_Call {
-	_c.Call.Return(_a0)
+func (_c *StorageFacade_Add_Call) Return(_a0 uint64, _a1 error) *StorageFacade_Add_Call {
+	_c.Call.Return(_a0, _a1)
 	return _c
 }
 

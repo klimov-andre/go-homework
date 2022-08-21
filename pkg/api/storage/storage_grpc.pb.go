@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageClient interface {
-	MovieCreate(ctx context.Context, in *StorageMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieCreate(ctx context.Context, in *StorageMovieCreateRequest, opts ...grpc.CallOption) (*StorageMovieCreateResponse, error)
 	MovieList(ctx context.Context, in *StorageMovieListRequest, opts ...grpc.CallOption) (Storage_MovieListClient, error)
 	MovieUpdate(ctx context.Context, in *StorageMovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *StorageMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -38,8 +38,8 @@ func NewStorageClient(cc grpc.ClientConnInterface) StorageClient {
 	return &storageClient{cc}
 }
 
-func (c *storageClient) MovieCreate(ctx context.Context, in *StorageMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *storageClient) MovieCreate(ctx context.Context, in *StorageMovieCreateRequest, opts ...grpc.CallOption) (*StorageMovieCreateResponse, error) {
+	out := new(StorageMovieCreateResponse)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.storage.Storage/MovieCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (c *storageClient) MovieGetOne(ctx context.Context, in *StorageMovieGetOneR
 // All implementations must embed UnimplementedStorageServer
 // for forward compatibility
 type StorageServer interface {
-	MovieCreate(context.Context, *StorageMovieCreateRequest) (*emptypb.Empty, error)
+	MovieCreate(context.Context, *StorageMovieCreateRequest) (*StorageMovieCreateResponse, error)
 	MovieList(*StorageMovieListRequest, Storage_MovieListServer) error
 	MovieUpdate(context.Context, *StorageMovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *StorageMovieDeleteRequest) (*emptypb.Empty, error)
@@ -122,7 +122,7 @@ type StorageServer interface {
 type UnimplementedStorageServer struct {
 }
 
-func (UnimplementedStorageServer) MovieCreate(context.Context, *StorageMovieCreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedStorageServer) MovieCreate(context.Context, *StorageMovieCreateRequest) (*StorageMovieCreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
 func (UnimplementedStorageServer) MovieList(*StorageMovieListRequest, Storage_MovieListServer) error {

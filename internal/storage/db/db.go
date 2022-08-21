@@ -7,7 +7,6 @@ import (
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"homework/config/storage"
 	"homework/internal/storage/models"
 )
 
@@ -36,8 +35,8 @@ type Database struct {
 	pool PgxInterface
 }
 
-func NewDatabase() (DatabaseInterface, error) {
-	pool, err := pgxpool.Connect(context.Background(), storage.DbDSN)
+func NewDatabase(connectString string) (DatabaseInterface, error) {
+	pool, err := pgxpool.Connect(context.Background(), connectString)
 	if err != nil {
 		return nil, err
 	}

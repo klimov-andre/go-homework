@@ -5,7 +5,7 @@ option go_package = "homework/pkg/api/storage;storage";
 import "google/protobuf/empty.proto";
 
 service Storage {
-  rpc MovieCreate(StorageMovieCreateRequest) returns (google.protobuf.Empty){}
+  rpc MovieCreate(StorageMovieCreateRequest) returns (StorageMovieCreateResponse){}
   rpc MovieList(StorageMovieListRequest) returns (stream StorageMovieListResponse){}
   rpc MovieUpdate(StorageMovieUpdateRequest) returns (google.protobuf.Empty){}
   rpc MovieDelete(StorageMovieDeleteRequest) returns (google.protobuf.Empty){}
@@ -22,6 +22,9 @@ message Movie {
 message StorageMovieCreateRequest {
   string title = 1;
   int32 year = 2;
+}
+message StorageMovieCreateResponse {
+  uint64 id = 1;
 }
 
 // MovieList endpoint messages

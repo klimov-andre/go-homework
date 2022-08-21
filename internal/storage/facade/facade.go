@@ -14,7 +14,7 @@ var _ StorageFacade = (*storageFacade)(nil)
 
 type StorageFacade interface {
 	List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error)
-	Add(ctx context.Context, m *models.Movie) error
+	Add(ctx context.Context, m *models.Movie) (uint64, error)
 	Update(ctx context.Context, id uint64, newMovie *models.Movie) error
 	Delete(ctx context.Context, id uint64) error
 	GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error)
@@ -25,8 +25,8 @@ type storageFacade struct {
 	cache cache.CacheInterface
 }
 
-func NewStorage() (StorageFacade, error) {
-	db, err := dbPkg.NewDatabase()
+func NewStorage(dbConnection string) (StorageFacade, error) {
+	db, err := dbPkg.NewDatabase(dbConnection)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not init database")
 	}
@@ -50,14 +50,14 @@ func (s *storageFacade) List(ctx context.Context, limit, offset int, order strin
 	return movies, nil
 }
 
-func (s *storageFacade) Add(ctx context.Context, m *models.Movie) error {
+func (s *storageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error) {
 	id, err := s.db.Add(ctx, m)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	s.cache.AddOrUpdate(ctx, id, m)
-	return nil
+	return id, err
 }
 
 func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {

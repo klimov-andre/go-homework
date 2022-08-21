@@ -26,7 +26,7 @@ func runGRPC(storage facade.StorageFacade) {
 
 func main() {
 	log.Println("start storage service")
-	storage, err := facade.NewStorage()
+	storage, err := facade.NewStorage(storageCfg.DbDSN)
 	if err != nil {
 		log.Fatal(err)
 	}

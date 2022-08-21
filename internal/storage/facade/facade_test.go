@@ -32,9 +32,10 @@ func TestStorageFacade_Add(t *testing.T) {
 			cache: cache,
 		}
 
-		err := storage.Add(context.Background(), m)
+		id, err := storage.Add(context.Background(), m)
 
 		assert.NoError(t, err)
+		assert.True(t, id == 1)
 		db.AssertNumberOfCalls(t, "Add", 1)
 		cache.AssertNumberOfCalls(t, "AddOrUpdate", 1)
 	})
@@ -56,7 +57,7 @@ func TestStorageFacade_Add(t *testing.T) {
 			cache: cache,
 		}
 
-		err := storage.Add(context.Background(), m)
+		_, err := storage.Add(context.Background(), m)
 
 		assert.Error(t, err)
 		db.AssertNumberOfCalls(t, "Add", 1)

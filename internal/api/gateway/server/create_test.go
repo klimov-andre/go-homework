@@ -62,7 +62,7 @@ func TestGatewayServer_MovieCreate(t *testing.T) {
 		storage.On("Add", mock.Anything, &models.Movie{
 			Title: "Hello",
 			Year:  1999,
-		}).Return(nil)
+		}).Return(uint64(1), nil)
 
 		_, err := server.MovieCreate(context.Background(), &pb.GatewayMovieCreateRequest{
 			Title: "Hello",
@@ -82,7 +82,7 @@ func TestGatewayServer_MovieCreate(t *testing.T) {
 		storage.On("Add", mock.Anything, &models.Movie{
 			Title: "Hello",
 			Year:  1999,
-		}).Return(errors.New("error"))
+		}).Return(uint64(0), errors.New("error"))
 
 		_, err := server.MovieCreate(context.Background(), &pb.GatewayMovieCreateRequest{
 			Title: "Hello",

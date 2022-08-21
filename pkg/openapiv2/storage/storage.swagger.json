@@ -60,6 +60,15 @@
         }
       }
     },
+    "storageStorageMovieCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
     "storageStorageMovieGetOneResponse": {
       "type": "object",
       "properties": {
