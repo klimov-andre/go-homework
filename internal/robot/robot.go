@@ -59,7 +59,8 @@ func (r *Robot) Add(args string) (*models.Movie, error) {
 		return nil, err
 	}
 
-	return m, r.storage.Add(context.Background(), m)
+	_, err = r.storage.Add(context.Background(), m)
+	return m, err
 }
 
 func (r *Robot) Remove(args string) error {

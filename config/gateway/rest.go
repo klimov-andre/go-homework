@@ -1,3 +1,3 @@
-package config
+package gateway
 
 const RestPort = ":8080"

@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayClient interface {
-	MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*GatewayMovieCreateResponse, error)
 	MovieList(ctx context.Context, in *GatewayMovieListRequest, opts ...grpc.CallOption) (*GatewayMovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *GatewayMovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -38,8 +38,8 @@ func NewGatewayClient(cc grpc.ClientConnInterface) GatewayClient {
 	return &gatewayClient{cc}
 }
 
-func (c *gatewayClient) MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *gatewayClient) MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*GatewayMovieCreateResponse, error) {
+	out := new(GatewayMovieCreateResponse)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieCreate", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func (c *gatewayClient) MovieGetOne(ctx context.Context, in *GatewayMovieGetOneR
 // All implementations must embed UnimplementedGatewayServer
 // for forward compatibility
 type GatewayServer interface {
-	MovieCreate(context.Context, *GatewayMovieCreateRequest) (*emptypb.Empty, error)
+	MovieCreate(context.Context, *GatewayMovieCreateRequest) (*GatewayMovieCreateResponse, error)
 	MovieList(context.Context, *GatewayMovieListRequest) (*GatewayMovieListResponse, error)
 	MovieUpdate(context.Context, *GatewayMovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error)
@@ -99,7 +99,7 @@ type GatewayServer interface {
 type UnimplementedGatewayServer struct {
 }
 
-func (UnimplementedGatewayServer) MovieCreate(context.Context, *GatewayMovieCreateRequest) (*emptypb.Empty, error) {
+func (UnimplementedGatewayServer) MovieCreate(context.Context, *GatewayMovieCreateRequest) (*GatewayMovieCreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
 func (UnimplementedGatewayServer) MovieList(context.Context, *GatewayMovieListRequest) (*GatewayMovieListResponse, error) {

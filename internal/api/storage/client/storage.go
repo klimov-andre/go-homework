@@ -13,6 +13,7 @@ import (
 
 var _ facade.StorageFacade = (*grpcStorage)(nil)
 
+// grpcStorage implements StorageFacade and use remote Storage service
 type grpcStorage struct {
 	storage pb.StorageClient
 }
@@ -52,14 +53,14 @@ func (s *grpcStorage) List(ctx context.Context, limit, offset int, order string)
 	}
 }
 
-func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) error {
+func (s *grpcStorage) Add(ctx context.Context, m *models.Movie) (uint64, error) {
 	request := &pb.StorageMovieCreateRequest{
 		Title: m.Title,
 		Year: int32(m.Year),
 	}
 
-	_, err := s.storage.MovieCreate(ctx, request)
-	return err
+	req, err := s.storage.MovieCreate(ctx, request)
+	return req.GetId(), err
 }
 
 func (s *grpcStorage) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {

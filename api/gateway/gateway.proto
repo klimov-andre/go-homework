@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service Gateway {
-  rpc MovieCreate(GatewayMovieCreateRequest) returns (google.protobuf.Empty){
+  rpc MovieCreate(GatewayMovieCreateRequest) returns (GatewayMovieCreateResponse){
     option (google.api.http) = {
       post: "/v1/movie"
       body: "*"
@@ -52,6 +52,9 @@ enum ListOrder {
 message GatewayMovieCreateRequest {
   string title = 1;
   int32 year = 2;
+}
+message GatewayMovieCreateResponse {
+  uint64 id = 1;
 }
 
 // MovieList endpoint messages

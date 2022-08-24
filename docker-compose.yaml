@@ -12,3 +12,17 @@ services:
       - ./postgresql/data:/var/lib/postgresql/data
     ports:
       - "5555:5432"
+
+  postgresql-test:
+    image: postgres:14.4
+    restart: on-failure
+    container_name: postgres-movies-test
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: movies-test
+      PGDATA: /data/postgres
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - "5556:5432"

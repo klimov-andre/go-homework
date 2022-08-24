@@ -23,8 +23,7 @@
           "200": {
             "description": "A successful response.",
             "schema": {
-              "type": "object",
-              "properties": {}
+              "$ref": "#/definitions/gatewayGatewayMovieCreateResponse"
             }
           },
           "default": {
@@ -189,6 +188,15 @@
         }
       },
       "title": "GatewayMovieCreateRequest endpoint messages"
+    },
+    "gatewayGatewayMovieCreateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
     },
     "gatewayGatewayMovieGetOneResponse": {
       "type": "object",
