@@ -9,7 +9,7 @@ import (
 	pb "homework/pkg/api/gateway"
 )
 
-func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+func (g *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
 	if m.GetId() <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "movie.id must be > 0")
@@ -21,7 +21,7 @@ func (i *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpd
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	if err = i.storage.Update(ctx, m.GetId(), upd); err != nil {
+	if err = g.storage.Update(ctx, m.GetId(), upd); err != nil {
 		return nil, err
 	}
 

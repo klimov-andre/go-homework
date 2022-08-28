@@ -17,14 +17,14 @@ func orderToString(order pb.ListOrder) string {
 	return result
 }
 
-func (i *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.GatewayMovieListResponse, error) {
+func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.GatewayMovieListResponse, error) {
 	limit := int(req.GetLimit())
 	if limit <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "limit must be > 0")
 	}
 
 	order := orderToString(req.GetOrder())
-	list, err := i.storage.List(ctx, limit, 0, order)
+	list, err := g.storage.List(ctx, limit, 0, order)
 	if err != nil {
 		return nil, err
 	}

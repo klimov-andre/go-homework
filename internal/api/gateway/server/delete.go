@@ -8,13 +8,13 @@ import (
 	pb "homework/pkg/api/gateway"
 )
 
-func (i *gatewayServer) MovieDelete(ctx context.Context, req *pb.GatewayMovieDeleteRequest) (*emptypb.Empty, error) {
+func (g *gatewayServer) MovieDelete(ctx context.Context, req *pb.GatewayMovieDeleteRequest) (*emptypb.Empty, error) {
 	id := req.GetId()
 	if id <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "id must be > 0")
 	}
 
-	if err := i.storage.Delete(ctx, req.GetId()); err != nil {
+	if err := g.storage.Delete(ctx, req.GetId()); err != nil {
 		return nil, err
 	}
 

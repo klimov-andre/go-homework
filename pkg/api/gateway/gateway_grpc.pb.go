@@ -24,9 +24,12 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GatewayClient interface {
 	MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*GatewayMovieCreateResponse, error)
+	MovieCreateQueued(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieList(ctx context.Context, in *GatewayMovieListRequest, opts ...grpc.CallOption) (*GatewayMovieListResponse, error)
 	MovieUpdate(ctx context.Context, in *GatewayMovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieUpdateQueued(ctx context.Context, in *GatewayMovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDelete(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	MovieDeleteQueued(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieGetOne(ctx context.Context, in *GatewayMovieGetOneRequest, opts ...grpc.CallOption) (*GatewayMovieGetOneResponse, error)
 }
 
@@ -41,6 +44,15 @@ func NewGatewayClient(cc grpc.ClientConnInterface) GatewayClient {
 func (c *gatewayClient) MovieCreate(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*GatewayMovieCreateResponse, error) {
 	out := new(GatewayMovieCreateResponse)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieCreate", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) MovieCreateQueued(ctx context.Context, in *GatewayMovieCreateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieCreateQueued", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +77,27 @@ func (c *gatewayClient) MovieUpdate(ctx context.Context, in *GatewayMovieUpdateR
 	return out, nil
 }
 
+func (c *gatewayClient) MovieUpdateQueued(ctx context.Context, in *GatewayMovieUpdateRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieUpdateQueued", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gatewayClient) MovieDelete(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieDelete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gatewayClient) MovieDeleteQueued(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/ozon.dev.homework.api.gateway.Gateway/MovieDeleteQueued", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -88,9 +118,12 @@ func (c *gatewayClient) MovieGetOne(ctx context.Context, in *GatewayMovieGetOneR
 // for forward compatibility
 type GatewayServer interface {
 	MovieCreate(context.Context, *GatewayMovieCreateRequest) (*GatewayMovieCreateResponse, error)
+	MovieCreateQueued(context.Context, *GatewayMovieCreateRequest) (*emptypb.Empty, error)
 	MovieList(context.Context, *GatewayMovieListRequest) (*GatewayMovieListResponse, error)
 	MovieUpdate(context.Context, *GatewayMovieUpdateRequest) (*emptypb.Empty, error)
+	MovieUpdateQueued(context.Context, *GatewayMovieUpdateRequest) (*emptypb.Empty, error)
 	MovieDelete(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error)
+	MovieDeleteQueued(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *GatewayMovieGetOneRequest) (*GatewayMovieGetOneResponse, error)
 	mustEmbedUnimplementedGatewayServer()
 }
@@ -102,14 +135,23 @@ type UnimplementedGatewayServer struct {
 func (UnimplementedGatewayServer) MovieCreate(context.Context, *GatewayMovieCreateRequest) (*GatewayMovieCreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieCreate not implemented")
 }
+func (UnimplementedGatewayServer) MovieCreateQueued(context.Context, *GatewayMovieCreateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieCreateQueued not implemented")
+}
 func (UnimplementedGatewayServer) MovieList(context.Context, *GatewayMovieListRequest) (*GatewayMovieListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieList not implemented")
 }
 func (UnimplementedGatewayServer) MovieUpdate(context.Context, *GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdate not implemented")
 }
+func (UnimplementedGatewayServer) MovieUpdateQueued(context.Context, *GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieUpdateQueued not implemented")
+}
 func (UnimplementedGatewayServer) MovieDelete(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieDelete not implemented")
+}
+func (UnimplementedGatewayServer) MovieDeleteQueued(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MovieDeleteQueued not implemented")
 }
 func (UnimplementedGatewayServer) MovieGetOne(context.Context, *GatewayMovieGetOneRequest) (*GatewayMovieGetOneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
@@ -141,6 +183,24 @@ func _Gateway_MovieCreate_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GatewayServer).MovieCreate(ctx, req.(*GatewayMovieCreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_MovieCreateQueued_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayMovieCreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).MovieCreateQueued(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.gateway.Gateway/MovieCreateQueued",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).MovieCreateQueued(ctx, req.(*GatewayMovieCreateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -181,6 +241,24 @@ func _Gateway_MovieUpdate_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gateway_MovieUpdateQueued_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayMovieUpdateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).MovieUpdateQueued(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.gateway.Gateway/MovieUpdateQueued",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).MovieUpdateQueued(ctx, req.(*GatewayMovieUpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gateway_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GatewayMovieDeleteRequest)
 	if err := dec(in); err != nil {
@@ -195,6 +273,24 @@ func _Gateway_MovieDelete_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GatewayServer).MovieDelete(ctx, req.(*GatewayMovieDeleteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gateway_MovieDeleteQueued_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GatewayMovieDeleteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GatewayServer).MovieDeleteQueued(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ozon.dev.homework.api.gateway.Gateway/MovieDeleteQueued",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GatewayServer).MovieDeleteQueued(ctx, req.(*GatewayMovieDeleteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -229,6 +325,10 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Gateway_MovieCreate_Handler,
 		},
 		{
+			MethodName: "MovieCreateQueued",
+			Handler:    _Gateway_MovieCreateQueued_Handler,
+		},
+		{
 			MethodName: "MovieList",
 			Handler:    _Gateway_MovieList_Handler,
 		},
@@ -237,8 +337,16 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Gateway_MovieUpdate_Handler,
 		},
 		{
+			MethodName: "MovieUpdateQueued",
+			Handler:    _Gateway_MovieUpdateQueued_Handler,
+		},
+		{
 			MethodName: "MovieDelete",
 			Handler:    _Gateway_MovieDelete_Handler,
+		},
+		{
+			MethodName: "MovieDeleteQueued",
+			Handler:    _Gateway_MovieDeleteQueued_Handler,
 		},
 		{
 			MethodName: "MovieGetOne",
