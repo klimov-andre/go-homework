@@ -12,6 +12,7 @@ require (
 	github.com/jackc/pgx/v4 v4.17.0
 	github.com/pashagolub/pgxmock v1.8.0
 	github.com/pkg/errors v0.9.1
+	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.8.0
 	google.golang.org/genproto v0.0.0-20220719170305-83ca9fad585f
 	google.golang.org/grpc v1.48.0

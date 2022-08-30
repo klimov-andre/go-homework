@@ -4,6 +4,7 @@ import (
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"homework/internal/api/gateway/metrics"
 	pb "homework/pkg/api/gateway"
 )
 
@@ -18,6 +19,8 @@ func orderToString(order pb.ListOrder) string {
 }
 
 func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.GatewayMovieListResponse, error) {
+	metrics.GatewayTotalListRequests.Add(1)
+
 	limit := int(req.GetLimit())
 	if limit <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "limit must be > 0")

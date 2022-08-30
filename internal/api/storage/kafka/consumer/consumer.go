@@ -3,6 +3,7 @@ package consumer
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/sirupsen/logrus"
 	"homework/config/kafka"
 	"homework/internal/api/storage/kafka/consumer/handler"
 )
@@ -20,7 +21,9 @@ type Consumer struct {
 func (c *Consumer) subscribe(topic string, handler consumerHandler) error{
 	partitionList, err := c.consumerKafka.Partitions(topic)
 	if err != nil {
-		return fmt.Errorf("error retrieving partitionList: %v", err.Error())
+		err = fmt.Errorf("error retrieving partitionList: %v", err.Error())
+		logrus.Error(err.Error())
+		return err
 	}
 
 	for _, partition := range partitionList {
@@ -42,8 +45,10 @@ func (c *Consumer) registerHandler(topic string, handler consumerHandler) {
 func (c *Consumer) Serve() error {
 	for topic, handler := range c.handlersMap {
 		if err := c.subscribe(topic, handler); err != nil {
+			logrus.Errorf("could not subscribe topic '%v': %v", topic, err)
 			return err
 		}
+		logrus.Infof("subscribed to topic '%v'", topic)
 	}
 
 	return nil

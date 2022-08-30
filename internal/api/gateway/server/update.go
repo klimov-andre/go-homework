@@ -5,11 +5,14 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"homework/internal/api/gateway/metrics"
 	"homework/internal/storage/models"
 	pb "homework/pkg/api/gateway"
 )
 
 func (g *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+	metrics.GatewayTotalUpdateRequests.Add(1)
+
 	m := req.GetMovie()
 	if m.GetId() <= 0 {
 		return nil, status.Error(codes.InvalidArgument, "movie.id must be > 0")

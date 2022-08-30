@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"homework/config/kafka"
+	"homework/internal/api/gateway/metrics"
 	pb "homework/pkg/api/gateway"
 	pbStorage "homework/pkg/api/storage"
 
@@ -14,6 +15,8 @@ import (
 )
 
 func (g *gatewayServer) MovieUpdateQueued(_ context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+	metrics.GatewayTotalUpdateRequests.Add(1)
+
 	m := req.GetMovie()
 	request := &pbStorage.StorageMovieUpdateRequest{
 		Movie: &pbStorage.Movie{

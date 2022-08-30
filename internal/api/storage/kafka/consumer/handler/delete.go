@@ -2,20 +2,24 @@ package handler
 
 import (
 	"context"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 	pb "homework/pkg/api/storage"
-	"log"
 )
 
 func (h Handler) Delete(key, value []byte) {
+	log := logrus.WithField("request", "delete")
 	request := &pb.StorageMovieDeleteRequest{}
 
-	err := proto.Unmarshal(value, request)
-	if err != nil {
-		// TODO
+	if err := proto.Unmarshal(value, request); err != nil {
+		log.Errorf("value unmarshal error %v", err)
+		return
 	}
-	log.Printf("delete request %v %v", request.String(), string(key))
 
-	err = h.storage.Delete(context.Background(), request.GetId())
-	_ = err // TODO
+	log.Debugf("request %v, key=%v", request.String(), string(key))
+
+	if err := h.storage.Delete(context.Background(), request.GetId()); err != nil {
+		log.Warningf("delete movie error %v", err)
+		return
+	}
 }
