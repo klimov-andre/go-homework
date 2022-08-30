@@ -6,13 +6,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"homework/config/kafka"
 	pb "homework/pkg/api/gateway"
 	pbStorage "homework/pkg/api/storage"
 
 	"google.golang.org/protobuf/proto"
 )
-
-const topicDelete = "delete"
 
 func (g *gatewayServer) MovieDeleteQueued(_ context.Context, req *pb.GatewayMovieDeleteRequest) (*emptypb.Empty, error) {
 	id := req.GetId()
@@ -25,6 +24,6 @@ func (g *gatewayServer) MovieDeleteQueued(_ context.Context, req *pb.GatewayMovi
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	g.kafkaSender.SendMessage(topicDelete, fmt.Sprint(id), msg)
+	g.kafkaSender.SendMessage(kafka.TopicDelete, fmt.Sprint(id), msg)
 	return &emptypb.Empty{}, nil
 }

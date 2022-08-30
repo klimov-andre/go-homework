@@ -6,13 +6,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"homework/config/kafka"
 	pb "homework/pkg/api/gateway"
 	pbStorage "homework/pkg/api/storage"
 
 	"google.golang.org/protobuf/proto"
 )
-
-const topicUpdate = "update"
 
 func (g *gatewayServer) MovieUpdateQueued(_ context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
 	m := req.GetMovie()
@@ -29,6 +28,6 @@ func (g *gatewayServer) MovieUpdateQueued(_ context.Context, req *pb.GatewayMovi
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	g.kafkaSender.SendMessage(topicUpdate, fmt.Sprint(m.GetId()), msg)
+	g.kafkaSender.SendMessage(kafka.TopicUpdate, fmt.Sprint(m.GetId()), msg)
 	return &emptypb.Empty{}, nil
 }
