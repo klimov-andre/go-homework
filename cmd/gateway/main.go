@@ -1,6 +1,8 @@
 package main
 
 import (
+	"homework/config/gateway"
+	"homework/internal/api/gateway/kafka/sender"
 	storagePkg "homework/internal/api/storage/client"
 	servicePkg "homework/internal/tgservice"
 	"log"
@@ -19,6 +21,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	kafkaSender, err := sender.NewSender(gateway.Brokers)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	go func() {
 		if err := tgService.Run(); err != nil {
 			log.Fatal(err)
@@ -26,5 +33,5 @@ func main() {
 	}()
 
 	go runREST()
-	runGRPC(storage)
+	runGRPC(storage, kafkaSender)
 }

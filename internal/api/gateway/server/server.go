@@ -1,6 +1,7 @@
 package server
 
 import (
+	"homework/internal/api/gateway/kafka/sender"
 	"homework/internal/storage/facade"
 	pb "homework/pkg/api/gateway"
 )
@@ -8,11 +9,13 @@ import (
 type gatewayServer struct {
 	pb.UnimplementedGatewayServer
 
-	storage facade.StorageFacade
+	storage     facade.StorageFacade
+	kafkaSender *sender.Sender
 }
 
-func New(storage facade.StorageFacade) pb.GatewayServer {
+func New(storage facade.StorageFacade, kafkaSender *sender.Sender) pb.GatewayServer {
 	return &gatewayServer{
 		storage: storage,
+		kafkaSender: kafkaSender,
 	}
 }

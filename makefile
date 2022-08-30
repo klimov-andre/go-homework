@@ -26,8 +26,15 @@ migrate-test:
 .PHONY: run-test-infra
 run-test-infra:
 	docker-compose up -d postgresql-test
+	make run-kafka
 
 .PHONY: clear-test-db
 clear-test-db:
 	docker-compose exec postgresql-test psql -h localhost -p 5432 -U user -d movies-test -c "delete from public.Movie;"
 	docker-compose exec postgresql-test psql -h localhost -p 5432 -U user -d movies-test -c "ALTER SEQUENCE movie_id_seq RESTART WITH 1;"
+
+.PHONY: run-kafka
+run-kafka:
+	docker-compose up -d zookeeper
+	docker-compose up -d kafka-1
+	docker-compose up -d kafka-ui

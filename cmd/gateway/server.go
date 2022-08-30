@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config/gateway"
+	"homework/internal/api/gateway/kafka/sender"
 	apiPkg "homework/internal/api/gateway/server"
 	"homework/internal/storage/facade"
 	"log"
@@ -15,14 +16,14 @@ import (
 	pb "homework/pkg/api/gateway"
 )
 
-func runGRPC(storage facade.StorageFacade) {
+func runGRPC(storage facade.StorageFacade, kafkaSender *sender.Sender) {
 	listener, err := net.Listen(gateway.GrpcProtocol, gateway.GrpcPort)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterGatewayServer(grpcServer, apiPkg.New(storage))
+	pb.RegisterGatewayServer(grpcServer, apiPkg.New(storage, kafkaSender))
 
 	if err = grpcServer.Serve(listener); err != nil {
 		log.Fatal(err)
