@@ -1,9 +1,8 @@
 package router
 
 import (
-	"log"
-
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 type HandlerFunc func(string) (string, error)
@@ -24,7 +23,7 @@ func (r *Router) AddCommand(command string, handlerFunc HandlerFunc) {
 
 func (r *Router) Handle(command, arguments string) (string, error) {
 	id := uuid.New().String()
-	log.Printf("received command uuid: %v, command: %v, arguments %v", id, command, arguments)
+	logrus.Infof("received command uuid: %v, command: %v, arguments %v", id, command, arguments)
 
 	if handler, ok := r.routes[command]; ok {
 		return handler(arguments)
