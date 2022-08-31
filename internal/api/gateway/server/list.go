@@ -2,8 +2,11 @@ package server
 
 import (
 	"context"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"homework/config/gateway"
 	"homework/internal/api/gateway/metrics"
 	pb "homework/pkg/api/gateway"
 )
@@ -19,6 +22,10 @@ func orderToString(order pb.ListOrder) string {
 }
 
 func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListRequest) (*pb.GatewayMovieListResponse, error) {
+	var span trace.Span
+	ctx, span = otel.Tracer(gateway.SpanTraceName).Start(ctx, "MovieList")
+	defer span.End()
+
 	metrics.GatewayTotalListRequests.Add(1)
 
 	limit := int(req.GetLimit())
@@ -29,6 +36,7 @@ func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListR
 	order := orderToString(req.GetOrder())
 	list, err := g.storage.List(ctx, limit, 0, order)
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 	result := make([]*pb.Movie, 0, len(list))

@@ -3,9 +3,12 @@ package server
 import (
 	"context"
 	"fmt"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"homework/config/gateway"
 	"homework/config/kafka"
 	"homework/internal/api/gateway/metrics"
 	pb "homework/pkg/api/gateway"
@@ -14,7 +17,11 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (g *gatewayServer) MovieUpdateQueued(_ context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+func (g *gatewayServer) MovieUpdateQueued(ctx context.Context, req *pb.GatewayMovieUpdateRequest) (*emptypb.Empty, error) {
+	var span trace.Span
+	ctx, span = otel.Tracer(gateway.SpanTraceName).Start(ctx, "MovieUpdateQueued")
+	defer span.End()
+
 	metrics.GatewayTotalUpdateRequests.Add(1)
 
 	m := req.GetMovie()
@@ -28,6 +35,7 @@ func (g *gatewayServer) MovieUpdateQueued(_ context.Context, req *pb.GatewayMovi
 
 	msg, err := proto.Marshal(request)
 	if err != nil {
+		span.RecordError(err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

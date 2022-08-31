@@ -1,8 +1,12 @@
 package sender
 
 import (
+	"context"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
+	"homework/config/gateway"
 )
 
 type Sender struct {
@@ -23,12 +27,19 @@ func NewSender(brokers []string) (*Sender, error) {
 	}, nil
 }
 
-func (s *Sender) SendMessage(topic, key string, payload []byte) {
-	par, off, err := s.kafkaProducer.SendMessage(&sarama.ProducerMessage{
+func (s *Sender) SendMessage(ctx context.Context, topic, key string, payload []byte) {
+	var span trace.Span
+	ctx, span = otel.Tracer(gateway.SpanTraceName).Start(ctx, "SendMessage")
+	defer span.End()
+
+	_, _, err := s.kafkaProducer.SendMessage(&sarama.ProducerMessage{
 		Topic: topic,
 		Key:   sarama.StringEncoder(key),
 		Value: sarama.ByteEncoder(payload),
 	})
 
-	_, _, _ = par, off, err
+	if err != nil {
+		span.RecordError(err)
+		return
+	}
 }

@@ -3,6 +3,9 @@ package facade
 import (
 	"context"
 	"github.com/pkg/errors"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
+	storageCfg "homework/config/storage"
 	"homework/internal/storage/cache"
 	dbPkg "homework/internal/storage/db"
 	"homework/internal/storage/models"
@@ -38,8 +41,13 @@ func NewStorage(dbConnection string) (StorageFacade, error) {
 }
 
 func (s *storageFacade) List(ctx context.Context, limit, offset int, order string) ([]*models.Movie, error) {
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "List")
+	defer span.End()
+
 	movies, err := s.db.List(ctx, limit, offset, order)
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 
@@ -51,8 +59,13 @@ func (s *storageFacade) List(ctx context.Context, limit, offset int, order strin
 }
 
 func (s *storageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error) {
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "Add")
+	defer span.End()
+
 	id, err := s.db.Add(ctx, m)
 	if err != nil {
+		span.RecordError(err)
 		return 0, err
 	}
 
@@ -61,7 +74,12 @@ func (s *storageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error
 }
 
 func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.Movie) error {
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "Update")
+	defer span.End()
+
 	if err := s.db.Update(ctx, id, newMovie); err != nil {
+		span.RecordError(err)
 		return err
 	}
 
@@ -70,12 +88,18 @@ func (s *storageFacade) Update(ctx context.Context, id uint64, newMovie *models.
 }
 
 func (s *storageFacade) Delete(ctx context.Context, id uint64) error {
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "Delete")
+	defer span.End()
+
 	if err := s.db.Delete(ctx, id); err != nil {
+		span.RecordError(err)
 		return err
 	}
 
 	if err := s.cache.Delete(ctx, id); err != nil {
 		if !errors.Is(err, cache.ErrCacheNotExists) {
+			span.RecordError(err)
 			return err
 		}
 	}
@@ -83,8 +107,13 @@ func (s *storageFacade) Delete(ctx context.Context, id uint64) error {
 }
 
 func (s *storageFacade) GetOneMovie(ctx context.Context, id uint64) (*models.Movie, error) {
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "GetOneMovie")
+	defer span.End()
+
 	m, err := s.cache.GetById(ctx, id)
 	if err != nil && !errors.Is(err, cache.ErrCacheNotExists) {
+		span.RecordError(err)
 		return nil, err
 	}
 	if m != nil {
@@ -93,6 +122,7 @@ func (s *storageFacade) GetOneMovie(ctx context.Context, id uint64) (*models.Mov
 
 	m, err = s.db.GetOneMovie(ctx, id)
 	if err != nil {
+		span.RecordError(err)
 		return nil, err
 	}
 	s.cache.AddOrUpdate(ctx, id, m)

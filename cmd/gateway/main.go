@@ -7,11 +7,20 @@ import (
 	storagePkg "homework/internal/api/storage/client"
 	_ "homework/internal/logs"
 	servicePkg "homework/internal/tgservice"
+	"homework/pkg/tracing/exporter"
 	"net/http"
+	"os"
 )
 
 func main() {
 	logrus.Info("start gateway service")
+
+	exp, err := exporter.NewExporter(os.Stdout, "gateway", "0.0.6")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	exp.Run()
+	defer exp.DownExporter()
 
 	storage, err := storagePkg.New()
 	if err != nil {

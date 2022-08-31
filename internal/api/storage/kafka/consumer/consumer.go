@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"context"
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/sirupsen/logrus"
@@ -8,7 +9,7 @@ import (
 	"homework/internal/api/storage/kafka/consumer/handler"
 )
 
-type consumerHandler func([]byte, []byte)
+type consumerHandler func(context.Context, []byte, []byte)
 
 type Consumer struct {
 	initialOffset int64
@@ -31,7 +32,7 @@ func (c *Consumer) subscribe(topic string, handler consumerHandler) error{
 
 		go func(pc sarama.PartitionConsumer) {
 			for message := range pc.Messages() {
-				handler(message.Key, message.Value)
+				handler(context.Background(), message.Key, message.Value)
 			}
 		}(pc)
 	}
