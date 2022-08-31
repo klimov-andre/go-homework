@@ -8,6 +8,7 @@ import (
 	"homework/internal/api/storage/kafka/consumer"
 	"homework/internal/api/storage/kafka/consumer/handler"
 	apiPkg "homework/internal/api/storage/server"
+	_ "homework/internal/logs"
 	"homework/internal/storage/facade"
 	pb "homework/pkg/api/storage"
 	"homework/pkg/tracing/exporter"
@@ -43,7 +44,7 @@ func runKafkaHandler(storage facade.StorageFacade) {
 func main() {
 	logrus.Println("start storage service")
 
-	exp, err := exporter.NewExporter(os.Stdout, "gateway", "0.0.6")
+	exp, err := exporter.NewExporter(os.Stdout, "storage", "0.0.6")
 	if err != nil {
 		logrus.Fatal(err)
 	}
