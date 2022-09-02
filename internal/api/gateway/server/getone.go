@@ -20,15 +20,18 @@ func (g *gatewayServer) MovieGetOne(ctx context.Context, req *pb.GatewayMovieGet
 
 	id := req.GetId()
 	if id <= 0 {
+		metrics.GatewayInvalidGetOneRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, "id must be > 0")
 	}
 
 	m, err := g.storage.GetOneMovie(ctx, req.GetId())
 	if err != nil {
+		metrics.GatewayUnsuccessfulGetOneRequests.Add(1)
 		span.RecordError(err)
 		return nil, err
 	}
 
+	metrics.GatewaySuccessGetOneRequests.Add(1)
 	return &pb.GatewayMovieGetOneResponse{
 		Movie: &pb.Movie{
 			Id:    m.Id,

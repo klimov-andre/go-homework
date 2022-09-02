@@ -28,6 +28,7 @@ func (g *gatewayServer) MovieCreateQueued(ctx context.Context, req *pb.GatewayMo
 	m, err := models.NewMovie(req.GetTitle(), int(req.GetYear()))
 	if err != nil {
 		span.RecordError(err)
+		metrics.GatewayInvalidAddRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
@@ -38,11 +39,13 @@ func (g *gatewayServer) MovieCreateQueued(ctx context.Context, req *pb.GatewayMo
 
 	msg, err := proto.Marshal(request)
 	if err != nil {
+		metrics.GatewayUnsuccessfulAddRequests.Add(1)
 		span.RecordError(err)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	g.kafkaSender.SendMessage(ctx, kafka.TopicCreate, "", msg)
 
+	metrics.GatewaySuccessAddRequests.Add(1)
 	return &emptypb.Empty{}, nil
 }

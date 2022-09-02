@@ -22,6 +22,7 @@ func (g *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpd
 
 	m := req.GetMovie()
 	if m.GetId() <= 0 {
+		metrics.GatewayInvalidUpdateRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, "movie.id must be > 0")
 	}
 
@@ -29,13 +30,16 @@ func (g *gatewayServer) MovieUpdate(ctx context.Context, req *pb.GatewayMovieUpd
 	upd, err := models.NewMovie(m.GetTitle(), int(m.GetYear()))
 	if err != nil {
 		span.RecordError(err)
+		metrics.GatewayInvalidUpdateRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	if err = g.storage.Update(ctx, m.GetId(), upd); err != nil {
+		metrics.GatewayUnsuccessfulUpdateRequests.Add(1)
 		span.RecordError(err)
 		return nil, err
 	}
 
+	metrics.GatewaySuccessUpdateRequests.Add(1)
 	return &emptypb.Empty{}, nil
 }

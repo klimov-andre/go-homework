@@ -30,12 +30,14 @@ func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListR
 
 	limit := int(req.GetLimit())
 	if limit <= 0 {
+		metrics.GatewayInvalidListRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, "limit must be > 0")
 	}
 
 	order := orderToString(req.GetOrder())
 	list, err := g.storage.List(ctx, limit, 0, order)
 	if err != nil {
+		metrics.GatewayUnsuccessfulListRequests.Add(1)
 		span.RecordError(err)
 		return nil, err
 	}
@@ -48,6 +50,7 @@ func (g *gatewayServer) MovieList(ctx context.Context, req *pb.GatewayMovieListR
 		})
 	}
 
+	metrics.GatewaySuccessListRequests.Add(1)
 	return &pb.GatewayMovieListResponse{
 		Movie: result,
 	}, nil

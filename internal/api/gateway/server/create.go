@@ -22,15 +22,18 @@ func (g *gatewayServer) MovieCreate(ctx context.Context, req *pb.GatewayMovieCre
 	// NewMovie method checks input params
 	m, err := models.NewMovie(req.GetTitle(), int(req.GetYear()))
 	if err != nil {
+		metrics.GatewayInvalidAddRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	var id uint64
 	if id, err = g.storage.Add(ctx, m); err != nil {
+		metrics.GatewayUnsuccessfulAddRequests.Add(1)
 		span.RecordError(err)
 		return nil, err
 	}
 
+	metrics.GatewaySuccessAddRequests.Add(1)
 	return &pb.GatewayMovieCreateResponse{
 		Id: id,
 	}, nil

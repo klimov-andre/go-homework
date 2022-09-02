@@ -21,13 +21,16 @@ func (g *gatewayServer) MovieDelete(ctx context.Context, req *pb.GatewayMovieDel
 
 	id := req.GetId()
 	if id <= 0 {
+		metrics.GatewayInvalidDeleteRequests.Add(1)
 		return nil, status.Error(codes.InvalidArgument, "id must be > 0")
 	}
 
 	if err := g.storage.Delete(ctx, req.GetId()); err != nil {
+		metrics.GatewayUnsuccessfulDeleteRequests.Add(1)
 		span.RecordError(err)
 		return nil, err
 	}
 
+	metrics.GatewaySuccessDeleteRequests.Add(1)
 	return &emptypb.Empty{}, nil
 }
