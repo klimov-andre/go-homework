@@ -15,7 +15,7 @@ import (
 	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieUpdate(ctx context.Context, req *pb.StorageMovieUpdateRequest) (*emptypb.Empty, error) {
+func (s *storageServer) MovieUpdate(ctx context.Context, req *pb.StorageMovieUpdateRequest) (*emptypb.Empty, error) {
 	var span trace.Span
 	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "MovieUpdate")
 	defer span.End()
@@ -26,7 +26,7 @@ func (i *storageServer) MovieUpdate(ctx context.Context, req *pb.StorageMovieUpd
 		Year: int(m.Year),
 	}
 
-	if err := i.storage.Update(ctx, m.GetId(), upd); err != nil {
+	if err := s.storage.Update(ctx, m.GetId(), upd); err != nil {
 		span.RecordError(err)
 
 		if errors.Is(err, storage.ErrMovieNotExists) {

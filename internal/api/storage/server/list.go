@@ -11,7 +11,7 @@ import (
 	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storage_MovieListServer) error {
+func (s *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storage_MovieListServer) error {
 	ctx := srv.Context()
 
 	var span trace.Span
@@ -20,7 +20,7 @@ func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storag
 
 	limit, order := int(req.GetLimit()), req.GetOrder()
 	for offset := int(req.GetOffset());; offset += limit {
-		list, err := i.storage.List(ctx, limit, offset, order)
+		list, err := s.storage.List(ctx, limit, offset, order)
 		if err != nil {
 			span.RecordError(err)
 

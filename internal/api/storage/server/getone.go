@@ -13,12 +13,12 @@ import (
 	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieGetOne(ctx context.Context, req *pb.StorageMovieGetOneRequest) (*pb.StorageMovieGetOneResponse, error) {
+func (s *storageServer) MovieGetOne(ctx context.Context, req *pb.StorageMovieGetOneRequest) (*pb.StorageMovieGetOneResponse, error) {
 	var span trace.Span
 	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "MovieGetOne")
 	defer span.End()
 
-	m, err := i.storage.GetOneMovie(ctx, req.GetId())
+	m, err := s.storage.GetOneMovie(ctx, req.GetId())
 	if err != nil {
 		span.RecordError(err)
 

@@ -13,12 +13,12 @@ import (
 	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieDelete(ctx context.Context, req *pb.StorageMovieDeleteRequest) (*emptypb.Empty, error) {
+func (s *storageServer) MovieDelete(ctx context.Context, req *pb.StorageMovieDeleteRequest) (*emptypb.Empty, error) {
 	var span trace.Span
 	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "MovieDelete")
 	defer span.End()
 
-	if err := i.storage.Delete(ctx, req.GetId()); err != nil {
+	if err := s.storage.Delete(ctx, req.GetId()); err != nil {
 		span.RecordError(err)
 
 		if errors.Is(err, connections.ErrTimeout) {

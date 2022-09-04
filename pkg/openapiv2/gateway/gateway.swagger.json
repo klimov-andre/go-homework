@@ -271,6 +271,37 @@
           "Gateway"
         ]
       }
+    },
+    "/v2/movies/subscribe": {
+      "get": {
+        "operationId": "Gateway_MovieSubscribe",
+        "responses": {
+          "200": {
+            "description": "A successful response.(streaming responses)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/gatewayGatewayMovieSubscribeRequest"
+                },
+                "error": {
+                  "$ref": "#/definitions/rpcStatus"
+                }
+              },
+              "title": "Stream result of gatewayGatewayMovieSubscribeRequest"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Gateway"
+        ]
+      }
     }
   },
   "definitions": {
@@ -327,6 +358,15 @@
           }
         }
       }
+    },
+    "gatewayGatewayMovieSubscribeRequest": {
+      "type": "object",
+      "properties": {
+        "movie": {
+          "$ref": "#/definitions/gatewayMovie"
+        }
+      },
+      "title": "GatewayMovieSubscribe endpoint messages"
     },
     "gatewayGatewayMovieUpdateRequest": {
       "type": "object",

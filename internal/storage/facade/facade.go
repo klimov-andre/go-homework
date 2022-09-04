@@ -80,6 +80,7 @@ func (s *storageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error
 		span.RecordError(err)
 		return 0, err
 	}
+	m.Id = id
 
 	s.cache.AddOrUpdate(ctx, id, m)
 	return id, err
