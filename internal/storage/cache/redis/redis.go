@@ -32,6 +32,9 @@ type cache struct {
 }
 
 func (c *cache) AddOrUpdate(_ context.Context, id uint64, m *models.Movie) {
+	if m.Id == 0 {
+		m.Id = id
+	}
 	_ = c.rdb.Set(fmt.Sprint(id), m, 0)
 }
 
