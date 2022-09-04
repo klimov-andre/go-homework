@@ -1,8 +1,9 @@
-package cache
+package local
 
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	"homework/internal/storage/cache"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	"reflect"
@@ -101,8 +102,8 @@ func TestCache_Delete(t *testing.T) {
 				},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:       2,
+			expectedErr: cache.ErrCacheNotExists,
 			expectedData: map[uint64]*models.Movie {
 				1: {
 					Title: "1",
@@ -117,8 +118,8 @@ func TestCache_Delete(t *testing.T) {
 				data:   map[uint64]*models.Movie {},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:        2,
+			expectedErr:  cache.ErrCacheNotExists,
 			expectedData: map[uint64]*models.Movie {},
 		},
 	}
@@ -178,8 +179,8 @@ func TestCache_GetById(t *testing.T) {
 				},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:         2,
+			expectedErr:   cache.ErrCacheNotExists,
 			expectedMovie: nil,
 		},
 		{
@@ -188,8 +189,8 @@ func TestCache_GetById(t *testing.T) {
 				data:   map[uint64]*models.Movie {},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:         2,
+			expectedErr:   cache.ErrCacheNotExists,
 			expectedMovie: nil,
 		},
 	}

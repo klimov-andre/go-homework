@@ -9,10 +9,12 @@ import (
 	"homework/internal/api/storage/kafka/consumer/handler"
 	apiPkg "homework/internal/api/storage/server"
 	_ "homework/internal/logs"
+	"homework/internal/storage/cache"
 	"homework/internal/storage/facade"
 	pb "homework/pkg/api/storage"
 	"homework/pkg/tracing/exporter"
 	"net"
+	"net/http"
 	"os"
 )
 
@@ -51,11 +53,12 @@ func main() {
 	exp.Run()
 	defer exp.DownExporter()
 
-	storage, err := facade.NewStorage(storageCfg.DbDSN)
+	storage, err := facade.NewStorage(storageCfg.DbDSN, cache.TypeRedis)
 	if err != nil {
 		logrus.Fatal(err)
 	}
 
+	go http.ListenAndServe(":6001", http.DefaultServeMux)
 	runKafkaHandler(storage)
 	runGRPC(storage)
 }

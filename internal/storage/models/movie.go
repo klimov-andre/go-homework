@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
 	pb "homework/pkg/api/storage"
@@ -10,6 +11,14 @@ type Movie struct {
 	Id    uint64
 	Title string
 	Year  int
+}
+
+func (m Movie) MarshalBinary() ([]byte, error) {
+	return json.Marshal(m)
+}
+
+func (m *Movie) UnmarshalBinary(data []byte) error {
+	return json.Unmarshal(data, m)
 }
 
 func NewMovie(title string, year int) (*Movie, error) {
