@@ -1,3 +1,3 @@
 package gateway
 
-const RestPort = ":8080"
+const RestPort = ":8088"

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"homework/config/gateway"
 	"homework/internal/robot"
 	"homework/internal/router"
 	"homework/internal/storage/facade"
-	"log"
 )
 
 var (
@@ -38,7 +38,7 @@ func NewService(storage facade.StorageFacade) (*Service, error) {
 		return nil, errors.Wrap(err, "init robot")
 	}
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	logrus.Infof("Authorized on account %s", bot.Self.UserName)
 
 	service := &Service{bot: bot, robot: r}
 
@@ -70,7 +70,7 @@ func (s *Service) Run() error {
 				msg.Text = res
 			}
 		} else {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+			logrus.Infof("[%s] %s", update.Message.From.UserName, update.Message.Text)
 			msg.Text = fmt.Sprintf("you send <%v>", update.Message.Text)
 		}
 		_, err := s.bot.Send(msg)

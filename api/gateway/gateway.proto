@@ -12,23 +12,44 @@ service Gateway {
       body: "*"
     };
   }
+  rpc MovieCreateQueued(GatewayMovieCreateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v2/movie"
+      body: "*"
+    };
+  }
+
   rpc MovieList(GatewayMovieListRequest) returns (GatewayMovieListResponse){
     option (google.api.http) = {
       post: "/v1/movies/list"
       body: "*"
     };
   }
+
   rpc MovieUpdate(GatewayMovieUpdateRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       post: "/v1/movie/update"
       body: "*"
     };
   }
+  rpc MovieUpdateQueued(GatewayMovieUpdateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v2/movie/update"
+      body: "*"
+    };
+  }
+
   rpc MovieDelete(GatewayMovieDeleteRequest) returns (google.protobuf.Empty){
     option (google.api.http) = {
       delete: "/v1/movie/{id}"
     };
   }
+  rpc MovieDeleteQueued(GatewayMovieDeleteRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      delete: "/v2/movie/{id}"
+    };
+  }
+
   rpc MovieGetOne(GatewayMovieGetOneRequest) returns (GatewayMovieGetOneResponse){
     option (google.api.http) = {
       get: "/v1/movie/{id}"

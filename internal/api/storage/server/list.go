@@ -2,17 +2,28 @@ package server
 
 import (
 	"github.com/pkg/errors"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	storageCfg "homework/config/storage"
 	"homework/internal/storage/connections"
 	pb "homework/pkg/api/storage"
 )
 
 func (i *storageServer) MovieList(req *pb.StorageMovieListRequest, srv pb.Storage_MovieListServer) error {
+	ctx := srv.Context()
+
+	var span trace.Span
+	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "MovieList")
+	defer span.End()
+
 	limit, order := int(req.GetLimit()), req.GetOrder()
 	for offset := int(req.GetOffset());; offset += limit {
-		list, err := i.storage.List(srv.Context(), limit, offset, order)
+		list, err := i.storage.List(ctx, limit, offset, order)
 		if err != nil {
+			span.RecordError(err)
+
 			if errors.Is(err, connections.ErrTimeout) {
 				return status.Error(codes.DeadlineExceeded, err.Error())
 			}

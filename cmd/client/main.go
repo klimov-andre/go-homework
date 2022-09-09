@@ -3,17 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"homework/config/gateway"
 	pb "homework/pkg/api/gateway"
-	"log"
 )
 
 func main() {
 	conns, err := grpc.Dial(gateway.GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Panic(err)
+		logrus.Panic(err)
 	}
 
 	client := pb.NewGatewayClient(conns)

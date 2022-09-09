@@ -3,9 +3,9 @@ package robot
 import (
 	"context"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"homework/internal/storage/facade"
 	"homework/internal/storage/models"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -43,7 +43,7 @@ func (r *Robot) HelpFunc() string {
 }
 
 func (r *Robot) Add(args string) (*models.Movie, error) {
-	log.Printf("add command param: <%s>", args)
+	logrus.Infof("add command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) != 2 {
 		return nil, errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
@@ -64,7 +64,7 @@ func (r *Robot) Add(args string) (*models.Movie, error) {
 }
 
 func (r *Robot) Remove(args string) error {
-	log.Printf("remove command param: <%s>", args)
+	logrus.Infof("remove command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) != 1 {
 		return errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
@@ -83,7 +83,7 @@ func (r *Robot) Remove(args string) error {
 }
 
 func (r *Robot) Update(args string) (*models.Movie, error) {
-	log.Printf("update command param: <%s>", args)
+	logrus.Infof("update command param: <%s>", args)
 	params := strings.Split(args, " ")
 	if len(params) < 2 || len(params) > 3 {
 		return nil, errors.Wrapf(BadArgument, "%d items: <%v>", len(params), params)
