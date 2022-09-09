@@ -6,7 +6,10 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	storageCfg "homework/config/storage"
-	"homework/internal/storage/cache"
+	"homework/internal/api/storage/metrics"
+	cachePkg "homework/internal/storage/cache"
+	"homework/internal/storage/cache/local"
+	"homework/internal/storage/cache/redis"
 	dbPkg "homework/internal/storage/db"
 	"homework/internal/storage/models"
 )
@@ -25,18 +28,27 @@ type StorageFacade interface {
 
 type storageFacade struct {
 	db dbPkg.DatabaseInterface
-	cache cache.CacheInterface
+	cache cachePkg.CacheInterface
 }
 
-func NewStorage(dbConnection string) (StorageFacade, error) {
+func NewStorage(dbConnection string, cacheType cachePkg.Type) (StorageFacade, error) {
 	db, err := dbPkg.NewDatabase(dbConnection)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not init database")
 	}
 
+	var cache cachePkg.CacheInterface
+
+	switch cacheType {
+	case cachePkg.TypeLocal:
+		cache = local.NewLocalCache()
+	case cachePkg.TypeRedis:
+		cache = redis.NewRedisCache(metrics.CacheMissCounter, metrics.CacheHitCounter)
+	}
+
 	return &storageFacade{
 		db: db,
-		cache: cache.NewCache(),
+		cache: cache,
 	}, err
 }
 
@@ -68,6 +80,7 @@ func (s *storageFacade) Add(ctx context.Context, m *models.Movie) (uint64, error
 		span.RecordError(err)
 		return 0, err
 	}
+	m.Id = id
 
 	s.cache.AddOrUpdate(ctx, id, m)
 	return id, err
@@ -98,7 +111,7 @@ func (s *storageFacade) Delete(ctx context.Context, id uint64) error {
 	}
 
 	if err := s.cache.Delete(ctx, id); err != nil {
-		if !errors.Is(err, cache.ErrCacheNotExists) {
+		if !errors.Is(err, cachePkg.ErrCacheNotExists) {
 			span.RecordError(err)
 			return err
 		}
@@ -112,7 +125,7 @@ func (s *storageFacade) GetOneMovie(ctx context.Context, id uint64) (*models.Mov
 	defer span.End()
 
 	m, err := s.cache.GetById(ctx, id)
-	if err != nil && !errors.Is(err, cache.ErrCacheNotExists) {
+	if err != nil && !errors.Is(err, cachePkg.ErrCacheNotExists) {
 		span.RecordError(err)
 		return nil, err
 	}

@@ -55,6 +55,12 @@ service Gateway {
       get: "/v1/movie/{id}"
     };
   }
+
+  rpc MovieSubscribe(google.protobuf.Empty) returns (stream GatewayMovieSubscribeRequest){
+    option (google.api.http) = {
+      post: "/v2/movies/subscribe"
+    };
+  }
 }
 
 message Movie {
@@ -102,5 +108,10 @@ message GatewayMovieGetOneRequest {
   uint64 id = 1;
 }
 message GatewayMovieGetOneResponse {
+  Movie movie = 1;
+}
+
+// GatewayMovieSubscribe endpoint messages
+message GatewayMovieSubscribeRequest {
   Movie movie = 1;
 }

@@ -1,8 +1,9 @@
-package cache
+package local
 
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
+	cachePkg "homework/internal/storage/cache"
 	"homework/internal/storage/connections"
 	"homework/internal/storage/models"
 	"reflect"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestCache_AddOrUpdate(t *testing.T) {
-	cache := &Cache{
+	cache := &cache{
 		data:   make(map[uint64]*models.Movie),
 		pool:   connections.NewPool(poolSize, timeoutDuration),
 	}
@@ -68,14 +69,14 @@ func TestCache_AddOrUpdate(t *testing.T) {
 func TestCache_Delete(t *testing.T) {
 	tests := []struct {
 		name string
-		cache *Cache
+		cache *cache
 		argId uint64
 		expectedErr error
 		expectedData map[uint64]*models.Movie
 	} {
 		{
 			name: "success delete 1 item",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {
 					1: {
 						Title: "1",
@@ -91,7 +92,7 @@ func TestCache_Delete(t *testing.T) {
 		},
 		{
 			name: "delete 1 item not exists",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {
 					1: {
 						Title: "1",
@@ -101,8 +102,8 @@ func TestCache_Delete(t *testing.T) {
 				},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:       2,
+			expectedErr: cachePkg.ErrCacheNotExists,
 			expectedData: map[uint64]*models.Movie {
 				1: {
 					Title: "1",
@@ -113,12 +114,12 @@ func TestCache_Delete(t *testing.T) {
 		},
 		{
 			name: "empty cache delete 1 item not exists",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:        2,
+			expectedErr:  cachePkg.ErrCacheNotExists,
 			expectedData: map[uint64]*models.Movie {},
 		},
 	}
@@ -141,14 +142,14 @@ func TestCache_Delete(t *testing.T) {
 func TestCache_GetById(t *testing.T) {
 	tests := []struct {
 		name string
-		cache *Cache
+		cache *cache
 		argId uint64
 		expectedErr error
 		expectedMovie *models.Movie
 	} {
 		{
 			name: "get existed",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {
 					1: {
 						Title: "1",
@@ -168,7 +169,7 @@ func TestCache_GetById(t *testing.T) {
 		},
 		{
 			name: "get not existed",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {
 					1: {
 						Title: "1",
@@ -178,18 +179,18 @@ func TestCache_GetById(t *testing.T) {
 				},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:         2,
+			expectedErr:   cachePkg.ErrCacheNotExists,
 			expectedMovie: nil,
 		},
 		{
 			name: "empty cache get not existed",
-			cache: &Cache{
+			cache: &cache{
 				data:   map[uint64]*models.Movie {},
 				pool:   connections.NewPool(poolSize, timeoutDuration),
 			},
-			argId: 2,
-			expectedErr: ErrCacheNotExists,
+			argId:         2,
+			expectedErr:   cachePkg.ErrCacheNotExists,
 			expectedMovie: nil,
 		},
 	}

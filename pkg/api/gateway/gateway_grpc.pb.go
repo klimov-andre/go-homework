@@ -31,6 +31,7 @@ type GatewayClient interface {
 	MovieDelete(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieDeleteQueued(ctx context.Context, in *GatewayMovieDeleteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	MovieGetOne(ctx context.Context, in *GatewayMovieGetOneRequest, opts ...grpc.CallOption) (*GatewayMovieGetOneResponse, error)
+	MovieSubscribe(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Gateway_MovieSubscribeClient, error)
 }
 
 type gatewayClient struct {
@@ -113,6 +114,38 @@ func (c *gatewayClient) MovieGetOne(ctx context.Context, in *GatewayMovieGetOneR
 	return out, nil
 }
 
+func (c *gatewayClient) MovieSubscribe(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Gateway_MovieSubscribeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Gateway_ServiceDesc.Streams[0], "/ozon.dev.homework.api.gateway.Gateway/MovieSubscribe", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &gatewayMovieSubscribeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Gateway_MovieSubscribeClient interface {
+	Recv() (*GatewayMovieSubscribeRequest, error)
+	grpc.ClientStream
+}
+
+type gatewayMovieSubscribeClient struct {
+	grpc.ClientStream
+}
+
+func (x *gatewayMovieSubscribeClient) Recv() (*GatewayMovieSubscribeRequest, error) {
+	m := new(GatewayMovieSubscribeRequest)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // GatewayServer is the server API for Gateway service.
 // All implementations must embed UnimplementedGatewayServer
 // for forward compatibility
@@ -125,6 +158,7 @@ type GatewayServer interface {
 	MovieDelete(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error)
 	MovieDeleteQueued(context.Context, *GatewayMovieDeleteRequest) (*emptypb.Empty, error)
 	MovieGetOne(context.Context, *GatewayMovieGetOneRequest) (*GatewayMovieGetOneResponse, error)
+	MovieSubscribe(*emptypb.Empty, Gateway_MovieSubscribeServer) error
 	mustEmbedUnimplementedGatewayServer()
 }
 
@@ -155,6 +189,9 @@ func (UnimplementedGatewayServer) MovieDeleteQueued(context.Context, *GatewayMov
 }
 func (UnimplementedGatewayServer) MovieGetOne(context.Context, *GatewayMovieGetOneRequest) (*GatewayMovieGetOneResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MovieGetOne not implemented")
+}
+func (UnimplementedGatewayServer) MovieSubscribe(*emptypb.Empty, Gateway_MovieSubscribeServer) error {
+	return status.Errorf(codes.Unimplemented, "method MovieSubscribe not implemented")
 }
 func (UnimplementedGatewayServer) mustEmbedUnimplementedGatewayServer() {}
 
@@ -313,6 +350,27 @@ func _Gateway_MovieGetOne_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gateway_MovieSubscribe_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GatewayServer).MovieSubscribe(m, &gatewayMovieSubscribeServer{stream})
+}
+
+type Gateway_MovieSubscribeServer interface {
+	Send(*GatewayMovieSubscribeRequest) error
+	grpc.ServerStream
+}
+
+type gatewayMovieSubscribeServer struct {
+	grpc.ServerStream
+}
+
+func (x *gatewayMovieSubscribeServer) Send(m *GatewayMovieSubscribeRequest) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // Gateway_ServiceDesc is the grpc.ServiceDesc for Gateway service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -353,6 +411,12 @@ var Gateway_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Gateway_MovieGetOne_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "MovieSubscribe",
+			Handler:       _Gateway_MovieSubscribe_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "gateway/gateway.proto",
 }

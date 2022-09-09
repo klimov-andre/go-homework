@@ -14,7 +14,7 @@ import (
 	pb "homework/pkg/api/storage"
 )
 
-func (i *storageServer) MovieCreate(ctx context.Context, req *pb.StorageMovieCreateRequest) (*pb.StorageMovieCreateResponse, error) {
+func (s *storageServer) MovieCreate(ctx context.Context, req *pb.StorageMovieCreateRequest) (*pb.StorageMovieCreateResponse, error) {
 	var span trace.Span
 	ctx, span = otel.Tracer(storageCfg.SpanTraceName).Start(ctx, "MovieCreate")
 	defer span.End()
@@ -28,7 +28,7 @@ func (i *storageServer) MovieCreate(ctx context.Context, req *pb.StorageMovieCre
 		id uint64
 		err error
 	)
-	if id, err = i.storage.Add(ctx, m); err != nil {
+	if id, err = s.storage.Add(ctx, m); err != nil {
 		span.RecordError(err)
 
 		if errors.Is(err, storage.ErrMovieExists) {
@@ -38,5 +38,7 @@ func (i *storageServer) MovieCreate(ctx context.Context, req *pb.StorageMovieCre
 		}
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+	s.publisher.Publish(m)
 	return &pb.StorageMovieCreateResponse{Id: id}, nil
 }
